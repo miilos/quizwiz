@@ -73,4 +73,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->entityManager->flush();
         return $user;
     }
+
+    public function setPasswordResetToken(User $user, string $resetToken): User
+    {
+        $user->setPasswordResetToken($resetToken);
+        $user->setPasswordResetExpires(new \DateTime('+15 minutes'));
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
+    }
+
+    public function resetPassword(User $user, string $newPassword): User
+    {
+        $user->setPassword(
+            $this->passwordHasher->hashPassword($user, $newPassword)
+        );
+        $user->setPasswordResetToken(null);
+        $user->setPasswordResetExpires(null);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        return $user;
+    }
 }

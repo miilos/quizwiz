@@ -14,10 +14,53 @@ class MailerService
 
     public function sendAccountActivationLink(string $to, string $subject, string $activationToken): void
     {
+        $emailText = "Welcome to QuizWiz! We're so glad to have you on board :) <br />
+                        This is your account activation link:
+                        <br /><br />
+                        <a href='{$this->apiUrl}/api/account/activate/{$activationToken}' style='display: inline-block; background-color: cornflowerblue; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 16px; font-family: Arial, sans-serif;'>
+                            Activate account
+                        </a>";
+
+        $emailContent = str_replace('{{ TEXT }}', $emailText, $this->emailTemplate());
+
         $this->send(
             $to,
             $subject,
-            <<<HTML
+            $emailContent,
+            "Welcome to QuizWiz! We're so glad to have you on board :) This is your account activation link: {$this->apiUrl}/api/account/activate/{$activationToken}"
+        );
+    }
+
+    public function sendPasswordResetToken(string $to, string $subject, string $resetToken): void
+    {
+        $emailText = "Your password reset token is: <br />
+                        <h2>{$resetToken}</h2>
+                        This token is valid for <b>15 minutes</b>.";
+
+        $emailContent = str_replace('{{ TEXT }}', $emailText, $this->emailTemplate());
+
+        $this->send(
+            $to,
+            $subject,
+            $emailContent,
+            "Your password reset token is: {$resetToken}. This token is valid for 15 minutes."
+        );
+    }
+
+    public function send(string $to, string $subject, string $html, string $altText): void
+    {
+        $email = (new TemplatedEmail())
+            ->to($to)
+            ->subject($subject)
+            ->html($html)
+            ->text($altText);
+
+        $this->mailer->send($email);
+    }
+
+    private function emailTemplate(): string
+    {
+        return <<<HTML
                     <!DOCTYPE html>
                     <html>
                       <head>
@@ -39,12 +82,7 @@ class MailerService
                                 <tr>
                                   <td style='padding: 20px; font-family: Arial, sans-serif; color: black; font-size: 16px; line-height: 1.5;'>
                                     <p style='margin: 20px 0;'>
-                                      Welcome to QuizWiz! We're so glad to have you on board :) <br /><br />
-                                      This is your account activation link:
-                                      <br /><br /><br />
-                                      <a href='{$this->apiUrl}/api/account/activate/{$activationToken}' style='display: inline-block; background-color: cornflowerblue; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 16px; font-family: Arial, sans-serif;'>
-                                          Activate account
-                                        </a>
+                                      {{ TEXT }}
                                     </p>
                                   </td>
                                 </tr>
@@ -62,19 +100,6 @@ class MailerService
                         </table>
                       </body>
                     </html>
-                HTML,
-            "Welcome to QuizWiz! We're so glad to have you on board :) This is your account activation link: {$this->apiUrl}/api/account/activate/{$activationToken}"
-        );
-    }
-
-    public function send(string $to, string $subject, string $html, string $altText): void
-    {
-        $email = (new TemplatedEmail())
-            ->to($to)
-            ->subject($subject)
-            ->html($html)
-            ->text($altText);
-
-        $this->mailer->send($email);
+                HTML;
     }
 }
