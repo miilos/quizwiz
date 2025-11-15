@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -49,6 +51,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $accountActivationToken = null;
+
+    /**
+     * @var Collection<int, Quiz>
+     */
+    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'author')]
+    private Collection $quizzes;
+
+    /**
+     * @var Collection<int, QuizAttempt>
+     */
+    #[ORM\OneToMany(targetEntity: QuizAttempt::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $quizAttempts;
+
+    public function __construct()
+    {
+        $this->quizzes = new ArrayCollection();
+        $this->quizAttempts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -187,6 +207,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAccountActivationToken(?string $accountActivationToken): static
     {
         $this->accountActivationToken = $accountActivationToken;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quiz>
+     */
+    public function getQuizzes(): Collection
+    {
+        return $this->quizzes;
+    }
+
+    public function addQuiz(Quiz $quiz): static
+    {
+        if (!$this->quizzes->contains($quiz)) {
+            $this->quizzes->add($quiz);
+            $quiz->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuiz(Quiz $quiz): static
+    {
+        if ($this->quizzes->removeElement($quiz)) {
+            // set the owning side to null (unless already changed)
+            if ($quiz->getAuthor() === $this) {
+                $quiz->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, QuizAttempt>
+     */
+    public function getQuizAttempts(): Collection
+    {
+        return $this->quizAttempts;
+    }
+
+    public function addQuizAttempt(QuizAttempt $quizAttempt): static
+    {
+        if (!$this->quizAttempts->contains($quizAttempt)) {
+            $this->quizAttempts->add($quizAttempt);
+            $quizAttempt->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuizAttempt(QuizAttempt $quizAttempt): static
+    {
+        if ($this->quizAttempts->removeElement($quizAttempt)) {
+            // set the owning side to null (unless already changed)
+            if ($quizAttempt->getUser() === $this) {
+                $quizAttempt->setUser(null);
+            }
+        }
 
         return $this;
     }

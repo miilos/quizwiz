@@ -2,42 +2,51 @@
 
 namespace App\Dto;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class UserDto
 {
     public function __construct(
-        private string $username,
-        private string $email,
-        private string $password,
+        #[Assert\NotBlank(message: 'You must enter a username.')]
+        private ?string $username = null,
+
+        #[Assert\Email(message: 'Not a valid email address.')]
+        private ?string $email = null,
+
+        #[Assert\NotBlank(message: 'You must enter a password.')]
+        private ?string $password = null,
+
         private array $roles = ['ROLE_USER'],
+
         private ?string $accountActivationToken = null,
     ) {}
 
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername(string $username): void
+    public function setUsername(?string $username): void
     {
         $this->username = $username;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(?string $password): void
     {
         $this->password = $password;
     }
