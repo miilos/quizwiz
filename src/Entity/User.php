@@ -18,10 +18,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['basicUserInfo'])]
+    #[Groups(['basicUserInfo', 'full_quiz_data'])]
     private ?string $email = null;
 
     /**
@@ -46,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $passwordResetExpires = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['basicUserInfo'])]
+    #[Groups(['basicUserInfo', 'full_quiz_data'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, nullable: true)]

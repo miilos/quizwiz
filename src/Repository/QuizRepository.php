@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Dto\QuizDto;
 use App\Entity\Quiz;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,33 +13,24 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class QuizRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Quiz::class);
+        $this->entityManager = $entityManager;
     }
 
-    //    /**
-    //     * @return Quiz[] Returns an array of Quiz objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('q')
-    //            ->andWhere('q.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('q.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function createQuiz(QuizDto $quizDto): Quiz
+    {
+        $quiz = new Quiz();
+        $quiz->setTitle($quizDto->getTitle());
+        $quiz->setDescription($quizDto->getDescription());
+        $quiz->setAuthor($quizDto->getUser());
+        $quiz->setCreatedAt(new \DateTimeImmutable('now'));
 
-    //    public function findOneBySomeField($value): ?Quiz
-    //    {
-    //        return $this->createQueryBuilder('q')
-    //            ->andWhere('q.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $this->entityManager->persist($quiz);
+        $this->entityManager->flush();
+        return $quiz;
+    }
 }

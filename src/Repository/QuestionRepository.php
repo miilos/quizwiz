@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Dto\QuestionDto;
+use App\Entity\Enum\QuestionTypes;
 use App\Entity\Question;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,33 +14,27 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class QuestionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Question::class);
+        $this->entityManager = $entityManager;
     }
 
-    //    /**
-    //     * @return Question[] Returns an array of Question objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('q')
-    //            ->andWhere('q.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('q.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function createQuestion(QuestionDto $questionDto): Question
+    {
+        $question = new Question();
+        $question->setQuiz($questionDto->getQuiz());
+        $question->setText($questionDto->getText());
+        $question->setOptions($questionDto->getOptions());
+        $question->setCorrectAnswer($questionDto->getCorrectAnswer());
+        $question->setPosition($questionDto->getPosition());
+        $question->setType(QuestionTypes::from($questionDto->getType()));
+        $question->setExplanation($questionDto->getExplanation());
 
-    //    public function findOneBySomeField($value): ?Question
-    //    {
-    //        return $this->createQueryBuilder('q')
-    //            ->andWhere('q.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $this->entityManager->persist($question);
+        $this->entityManager->flush();
+        return $question;
+    }
 }

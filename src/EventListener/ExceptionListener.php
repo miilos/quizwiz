@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Exception\AuthException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -17,10 +18,14 @@ class ExceptionListener
         $exception = $event->getThrowable();
 
         $error = match (true) {
-            $exception instanceof UnprocessableEntityHttpException => $this->handleValidationErrorException($exception),
+            $exception instanceof UnprocessableEntityHttpException =>
+                $this->handleValidationErrorException($exception),
+            $exception instanceof AuthException =>
+                $this->getResponse($exception),
             default => new JsonResponse([
                 'status' => 'error',
                 'message' => 'Something went wrong!',
+                'details' => $exception->getMessage(),
             ], 500)
         };
 
@@ -32,7 +37,7 @@ class ExceptionListener
         return new JsonResponse([
             'status' => 'error',
             'message' => $t->getMessage(),
-        ], $t->getStatusCode());
+        ], $t->getCode());
     }
 
     private function handleValidationErrorException(UnprocessableEntityHttpException $exception): JsonResponse
@@ -46,6 +51,7 @@ class ExceptionListener
         $violationMessages = [];
         foreach ($violations as $violation) {
             $violationMessages[] = [
+                'entity' => $this->getConstraintViolationEntity($violation),
                 'property' => $violation->getPropertyPath(),
                 'message' => $violation->getMessage()
             ];
@@ -56,5 +62,18 @@ class ExceptionListener
             'message' => 'Validation failed. '.$exception->getMessage(),
             'violations' => $violationMessages,
         ]);
+    }
+
+    // assumes constraint validations only occur on dto objects
+    private function getConstraintViolationEntity(ConstraintViolation $violation): string
+    {
+        // get the entity classname
+        $entity = $violation->getRoot()::class;
+
+        // remove the namespace
+        $entity = substr($entity, strrpos($entity, '\\') + 1);
+
+        // remove the *Dto suffix and return the value
+        return strtolower(substr($entity, 0, -3));
     }
 }

@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Service\Converter;
+
+use App\Dto\QuestionDto;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+class QuestionConverterService extends EntityConverter
+{
+    public function __construct(
+        ValidatorInterface $validator,
+    ) {
+        parent::__construct($validator);
+    }
+
+    public function toDto(array $data): QuestionDto
+    {
+        $questionDto = new QuestionDto();
+        $questionDto->setText($data['text'] ?? null);
+        $questionDto->setOptions($data['options'] ?? null);
+
+        if (!isset($data['correctAnswer'])) {
+            $questionDto->setCorrectAnswer([]);
+        }
+        elseif (!is_array($data['correctAnswer'])) {
+            $questionDto->setCorrectAnswer([$data['correctAnswer']]);
+        }
+        else {
+            $questionDto->setCorrectAnswer($data['correctAnswer']);
+        }
+
+        $questionDto->setQuiz($data['quiz'] ?? null);
+        $questionDto->setType($data['type'] ?? null);
+        $questionDto->setExplanation($data['explanation'] ?? null);
+        $questionDto->setPosition($data['position'] ?? null);
+
+        // throws exception if it doesn't pass validation
+        $this->validateDto($questionDto);
+
+        return $questionDto;
+    }
+}

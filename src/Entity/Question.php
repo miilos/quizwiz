@@ -25,8 +25,8 @@ class Question
     #[ORM\Column(type: Types::JSON)]
     private array $options = [];
 
-    #[ORM\Column]
-    private ?int $correctAnswer = null;
+    #[ORM\Column(type: Types::JSON)]
+    private ?array $correctAnswer = [];
 
     #[ORM\Column]
     private ?int $position = null;
@@ -78,12 +78,12 @@ class Question
         return $this;
     }
 
-    public function getCorrectAnswer(): ?int
+    public function getCorrectAnswer(): array
     {
         return $this->correctAnswer;
     }
 
-    public function setCorrectAnswer(int $correctAnswer): static
+    public function setCorrectAnswer(array $correctAnswer): static
     {
         $this->correctAnswer = $correctAnswer;
 
