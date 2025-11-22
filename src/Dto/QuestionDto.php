@@ -7,7 +7,7 @@ use App\Entity\Quiz;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class QuestionDto implements ResourceInterface
+class QuestionDto implements EntityDtoInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'You must define question text.')]

@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Exception\ApiResourceNotFoundException;
 use App\Exception\AuthException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,8 @@ class ExceptionListener
         $error = match (true) {
             $exception instanceof UnprocessableEntityHttpException =>
                 $this->handleValidationErrorException($exception),
-            $exception instanceof AuthException =>
+            $exception instanceof AuthException,
+            $exception instanceof ApiResourceNotFoundException =>
                 $this->getResponse($exception),
             default => new JsonResponse([
                 'status' => 'error',

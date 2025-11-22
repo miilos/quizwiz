@@ -7,38 +7,46 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
-class Quiz
+class Quiz implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['full_quiz_data'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['full_quiz_data'])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'quizzes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['full_quiz_data'])]
     private ?User $author = null;
 
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * @var Collection<int, Question>
      */
     #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true)]
+    #[Groups(['full_quiz_data'])]
     private Collection $questions;
 
     /**
      * @var Collection<int, QuizAttempt>
      */
     #[ORM\OneToMany(targetEntity: QuizAttempt::class, mappedBy: 'quiz', orphanRemoval: true)]
+    #[Groups(['full_quiz_data'])]
     private Collection $attempts;
 
     public function __construct()

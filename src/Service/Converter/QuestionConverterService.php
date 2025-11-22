@@ -3,6 +3,8 @@
 namespace App\Service\Converter;
 
 use App\Dto\QuestionDto;
+use App\Entity\EntityInterface;
+use App\Entity\Question;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuestionConverterService extends EntityConverter
@@ -36,6 +38,23 @@ class QuestionConverterService extends EntityConverter
 
         // throws exception if it doesn't pass validation
         $this->validateDto($questionDto);
+
+        return $questionDto;
+    }
+
+    /**
+     * @param Question $question
+     */
+    public function entityToDto(EntityInterface $question): QuestionDto
+    {
+        $questionDto = new QuestionDto();
+        $questionDto->setText($question->getText());
+        $questionDto->setOptions($question->getOptions());
+        $questionDto->setQuiz($question->getQuiz());
+        $questionDto->setCorrectAnswer($question->getCorrectAnswer());
+        $questionDto->setPosition($question->getPosition());
+        $questionDto->setType($question->getType()->value);
+        $questionDto->setExplanation($question->getExplanation());
 
         return $questionDto;
     }

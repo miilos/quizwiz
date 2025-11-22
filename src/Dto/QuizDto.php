@@ -6,7 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class QuizDto implements ResourceInterface
+class QuizDto implements EntityDtoInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'You must title your quiz.')]

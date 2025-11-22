@@ -2,9 +2,9 @@
 
 namespace App\Service\Quiz;
 
-use App\Dto\ResourceInterface;
+use App\Dto\EntityDtoInterface;
 
 interface ResourceManagerInterface
 {
-    public function create(array $data): ResourceInterface;
+    public function create(array $data): EntityDtoInterface;
 }

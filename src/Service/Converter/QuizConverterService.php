@@ -3,16 +3,24 @@
 namespace App\Service\Converter;
 
 use App\Dto\QuizDto;
+use App\Entity\EntityInterface;
+use App\Entity\Question;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuizConverterService extends EntityConverter
 {
+    private QuestionConverterService $questionConverter;
+
     public function __construct(
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        QuestionConverterService $questionConverter,
     ) {
         parent::__construct($validator);
+        $this->questionConverter = $questionConverter;
     }
 
+    /** @throws UnprocessableEntityHttpException */
     public function toDto(array $data): QuizDto
     {
         $quizDto = new QuizDto();
@@ -21,8 +29,30 @@ class QuizConverterService extends EntityConverter
         $quizDto->setQuestions($data['questions'] ?? []);
         $quizDto->setUser($data['user'] ?? null);
 
-        // throws exception if it doesn't pass validation
         $this->validateDto($quizDto);
+
+        return $quizDto;
+    }
+
+    /**
+     * creates a dto first in order to use the validator component
+     * to validate the new data and creates the updates
+     * in the db afterward
+     */
+    public function entityToDto(EntityInterface $quiz): QuizDto
+    {
+        $quizDto = new QuizDto();
+        $quizDto->setTitle($quiz->getTitle());
+        $quizDto->setDescription($quiz->getDescription());
+
+        $questionDtos = [];
+        /** @var Question $question */
+        foreach ($quiz->getQuestions() as $question) {
+            $questionDtos[] = $this->questionConverter->entityToDto($question);
+        }
+
+        $quizDto->setQuestions($questionDtos);
+        $quizDto->setUser($quiz->getAuthor());
 
         return $quizDto;
     }

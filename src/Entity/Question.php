@@ -6,13 +6,15 @@ use App\Entity\Enum\QuestionTypes;
 use App\Repository\QuestionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
-class Question
+class Question implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
@@ -20,21 +22,27 @@ class Question
     private ?Quiz $quiz = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['full_quiz_data'])]
     private ?string $text = null;
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['full_quiz_data'])]
     private array $options = [];
 
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['full_quiz_data'])]
     private ?array $correctAnswer = [];
 
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?int $position = null;
 
     #[ORM\Column(enumType: QuestionTypes::class)]
+    #[Groups(['full_quiz_data'])]
     private ?QuestionTypes $type = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['full_quiz_data'])]
     private ?string $explanation = null;
 
     public function getId(): ?int

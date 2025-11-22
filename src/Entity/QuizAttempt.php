@@ -4,13 +4,15 @@ namespace App\Entity;
 
 use App\Repository\QuizAttemptRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: QuizAttemptRepository::class)]
-class QuizAttempt
+class QuizAttempt implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'attempts')]
@@ -18,16 +20,20 @@ class QuizAttempt
     private ?Quiz $quiz = null;
 
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private array $answers = [];
 
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?int $score = null;
 
     #[ORM\ManyToOne(inversedBy: 'quizAttempts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['full_quiz_data'])]
     private ?User $user = null;
 
     #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
     private ?\DateTimeImmutable $attemptedAt = null;
 
     public function getId(): ?int
