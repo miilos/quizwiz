@@ -9,7 +9,6 @@ use App\Exception\ApiResourceNotFoundException;
 use App\Repository\QuizRepository;
 use App\Service\Converter\QuizConverterService;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuizManagerService implements ResourceManagerInterface
 {
