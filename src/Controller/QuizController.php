@@ -61,7 +61,7 @@ class QuizController extends AbstractController
         DecoderInterface $decoder,
     ): JsonResponse
     {
-        $user = $this->getLoggedInUser($this->security);
+        $user = $this->getLoggedInUser($this->security, 'You must be logged in to create a quiz.');
 
         $reqData = $decoder->decode($request->getContent(), 'json');
         $reqData['user'] = $user;

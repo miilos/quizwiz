@@ -7,9 +7,11 @@ use App\Exception\AuthException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 #[AsEventListener]
 class ExceptionListener
@@ -22,7 +24,9 @@ class ExceptionListener
             $exception instanceof UnprocessableEntityHttpException =>
                 $this->handleValidationErrorException($exception),
             $exception instanceof AuthException,
-            $exception instanceof ApiResourceNotFoundException =>
+            $exception instanceof ApiResourceNotFoundException,
+            $exception instanceof BadRequestHttpException,
+            $exception instanceof TransportExceptionInterface =>
                 $this->getResponse($exception),
             default => new JsonResponse([
                 'status' => 'error',

@@ -17,7 +17,5 @@ services:
         resource: '../src/'
 
     App\Service\Util\MailerService:
-        $apiUrl: 'http://127.0.0.1:8000'
-
-    App\Service\OpenAi\OpenAi:
-        $apiKey: '%env(OPENAI_API_KEY)%'
+        arguments:
+            $apiUrl: 'http://127.0.0.1:8000'
