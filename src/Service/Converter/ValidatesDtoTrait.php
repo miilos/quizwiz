@@ -5,13 +5,14 @@ namespace App\Service\Converter;
 use App\Dto\EntityDtoInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ValidatesDtoTrait
 {
     /** @throws UnprocessableEntityHttpException */
-    public function validateDto(EntityDtoInterface $dto): void
+    public static function validateDto(EntityDtoInterface $dto, ValidatorInterface $validator): void
     {
-        $violations = $this->validator->validate($dto);
+        $violations = $validator->validate($dto);
         if (count($violations) > 0) {
             throw new UnprocessableEntityHttpException(
                 'Validation failed.',

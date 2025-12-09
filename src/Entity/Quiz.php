@@ -22,7 +22,7 @@ class Quiz implements EntityInterface
     #[Groups(['full_quiz_data'])]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['full_quiz_data'])]
     private ?string $description = null;
 
@@ -77,7 +77,7 @@ class Quiz implements EntityInterface
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 

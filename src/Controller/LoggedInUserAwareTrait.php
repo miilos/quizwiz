@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 trait LoggedInUserAwareTrait
 {
-    public function getLoggedInUser(Security $security, string $message = 'You must be logged in to access this route.'): UserInterface
+    public static function getLoggedInUser(Security $security, string $message = 'You must be logged in to access this route.'): UserInterface
     {
         $user = $security->getUser();
 

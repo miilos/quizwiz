@@ -65,10 +65,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\OneToMany(targetEntity: QuizAttempt::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $quizAttempts;
 
+    /**
+     * @var Collection<int, ChatHistory>
+     */
+    #[ORM\OneToMany(targetEntity: ChatHistory::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $chatHistories;
+
     public function __construct()
     {
         $this->quizzes = new ArrayCollection();
         $this->quizAttempts = new ArrayCollection();
+        $this->chatHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -266,6 +273,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
             // set the owning side to null (unless already changed)
             if ($quizAttempt->getUser() === $this) {
                 $quizAttempt->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ChatHistory>
+     */
+    public function getChatHistories(): Collection
+    {
+        return $this->chatHistories;
+    }
+
+    public function addChatHistory(ChatHistory $chatHistory): static
+    {
+        if (!$this->chatHistories->contains($chatHistory)) {
+            $this->chatHistories->add($chatHistory);
+            $chatHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChatHistory(ChatHistory $chatHistory): static
+    {
+        if ($this->chatHistories->removeElement($chatHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($chatHistory->getUser() === $this) {
+                $chatHistory->setUser(null);
             }
         }
 

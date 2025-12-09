@@ -10,15 +10,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuizConverterService extends EntityConverter
 {
-    private QuestionConverterService $questionConverter;
+    use ValidatesDtoTrait;
 
     public function __construct(
-        ValidatorInterface $validator,
-        QuestionConverterService $questionConverter,
-    ) {
-        parent::__construct($validator);
-        $this->questionConverter = $questionConverter;
-    }
+        private ValidatorInterface $validator,
+        private QuestionConverterService $questionConverter,
+    ) {}
 
     /** @throws UnprocessableEntityHttpException */
     public function toDto(array $data): QuizDto
@@ -29,7 +26,7 @@ class QuizConverterService extends EntityConverter
         $quizDto->setQuestions($data['questions'] ?? []);
         $quizDto->setUser($data['user'] ?? null);
 
-        $this->validateDto($quizDto);
+        self::validateDto($quizDto, $this->validator);
 
         return $quizDto;
     }

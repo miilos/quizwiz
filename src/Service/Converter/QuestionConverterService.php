@@ -9,11 +9,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuestionConverterService extends EntityConverter
 {
+    use ValidatesDtoTrait;
+
     public function __construct(
-        ValidatorInterface $validator,
-    ) {
-        parent::__construct($validator);
-    }
+        private ValidatorInterface $validator,
+    ) {}
 
     public function toDto(array $data): QuestionDto
     {
@@ -37,7 +37,7 @@ class QuestionConverterService extends EntityConverter
         $questionDto->setPosition($data['position'] ?? null);
 
         // throws exception if it doesn't pass validation
-        $this->validateDto($questionDto);
+        self::validateDto($questionDto, $this->validator);
 
         return $questionDto;
     }

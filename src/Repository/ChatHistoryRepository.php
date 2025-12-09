@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\ChatHistoryItemDto;
 use App\Entity\ChatHistory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,7 +25,7 @@ class ChatHistoryRepository extends ServiceEntityRepository
     public function persistResponse(ChatHistoryItemDto $chatHistoryItemDto): ChatHistory
     {
         $chatHistoryItem = new ChatHistory();
-        $chatHistoryItem->setUserId($chatHistoryItemDto->getUserIdentifier());
+        $chatHistoryItem->setUser($chatHistoryItemDto->getUser());
         $chatHistoryItem->setResponse($chatHistoryItemDto->getResponse());
 
         $this->entityManager->persist($chatHistoryItem);
@@ -32,11 +33,11 @@ class ChatHistoryRepository extends ServiceEntityRepository
         return $chatHistoryItem;
     }
 
-    public function getChatHistoryItems(string $userIdentifier, int $itemCount): array
+    public function getChatHistoryItems(User $user, int $itemCount): array
     {
         return $this->createQueryBuilder('chat_history')
-            ->andWhere('chat_history.userId = :userId')
-            ->setParameter('userId', $userIdentifier)
+            ->andWhere('chat_history.user = :user')
+            ->setParameter('user', $user)
             ->setMaxResults($itemCount)
             ->getQuery()
             ->getResult();

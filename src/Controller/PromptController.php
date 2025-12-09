@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Exception\AuthException;
 use App\Service\OpenAi\QuestionAiGeneratorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,7 +27,7 @@ class PromptController extends AbstractController
         QuestionAiGeneratorService $questionAiGenerator,
     ): JsonResponse
     {
-        $user = $this->getLoggedInUser($this->security, 'You must be logged in to access AI features.');
+        $user = self::getLoggedInUser($this->security, 'You must be logged in to access AI features.');
 
         $reqData = $decoder->decode($request->getContent(), 'json');
 
@@ -38,7 +37,7 @@ class PromptController extends AbstractController
 
         $prompt = $reqData['prompt'];
 
-        $question = $questionAiGenerator->generateQuestion($prompt, $user->getUserIdentifier());
+        $question = $questionAiGenerator->generateQuestion($prompt, $user);
 
         return $this->json([
             'status' => 'success',

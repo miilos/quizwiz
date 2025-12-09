@@ -4,7 +4,9 @@ namespace App\Service\OpenAi;
 
 use App\Dto\ChatHistoryItemDto;
 use App\Entity\ChatHistory;
+use App\Entity\User;
 use App\Repository\ChatHistoryRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class AiChatStorageService
 {
@@ -29,8 +31,8 @@ class AiChatStorageService
         return $formattedHistory;
     }
 
-    public function getChatHistory(string $userIdentifier, int $itemCount = 10): array
+    public function getChatHistory(User $user, int $itemCount = 10): array
     {
-        return $this->chatHistoryRepository->getChatHistoryItems($userIdentifier, $itemCount);
+        return $this->chatHistoryRepository->getChatHistoryItems($user, $itemCount);
     }
 }

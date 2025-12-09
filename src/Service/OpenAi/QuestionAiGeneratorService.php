@@ -3,9 +3,11 @@
 namespace App\Service\OpenAi;
 
 use App\Dto\ChatHistoryItemDto;
+use App\Entity\User;
 use Symfony\AI\Agent\AgentInterface;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class QuestionAiGeneratorService
@@ -43,10 +45,10 @@ EOF;
         private AiChatStorageService $chatStorage
     ) {}
 
-    public function generateQuestion(string $userPrompt, string $userIdentifier): array
+    public function generateQuestion(string $userPrompt, User $user): array
     {
         $previousResponses = $this->chatStorage->formatResponseHistory(
-            $this->chatStorage->getChatHistory($userIdentifier),
+            $this->chatStorage->getChatHistory($user),
         );
 
         $systemPrompt = str_replace('{{ PREVIOUS_RESPONSES }}', $previousResponses, self::ASSISTANT_PROMPT);
@@ -60,7 +62,7 @@ EOF;
         $responseContent = $this->decoder->decode($response->getContent(), 'json');
 
         $this->chatStorage->saveResponseToHistory(
-            new ChatHistoryItemDto($userIdentifier, $responseContent['question'])
+            new ChatHistoryItemDto($user, $responseContent['question'])
         );
 
         return $responseContent;

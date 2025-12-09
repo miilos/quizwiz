@@ -2,21 +2,24 @@
 
 namespace App\Dto;
 
+use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
+
 class ChatHistoryItemDto
 {
     public function __construct(
-        private string $userIdentifier,
+        private User $user,
         private string $response,
     ) {}
 
-    public function getUserIdentifier(): string
+    public function getUser(): User
     {
-        return $this->userIdentifier;
+        return $this->user;
     }
 
-    public function setUserIdentifier(string $userIdentifier): void
+    public function setUser(User $user): void
     {
-        $this->userIdentifier = $userIdentifier;
+        $this->user = $user;
     }
 
     public function getResponse(): string

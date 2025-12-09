@@ -9,6 +9,7 @@ use App\Exception\ApiResourceNotFoundException;
 use App\Repository\QuizRepository;
 use App\Service\Converter\QuizConverterService;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuizManagerService implements ResourceManagerInterface
 {
@@ -21,6 +22,7 @@ class QuizManagerService implements ResourceManagerInterface
         private QuizRepository $quizRepository,
         private QuestionManagerService $questionManager,
         private QuizConverterService $quizConverter,
+        private ValidatorInterface $validator,
     ) {}
 
     public function search(QuizSearchCriteriaDto $searchCriteria): array
@@ -77,7 +79,7 @@ class QuizManagerService implements ResourceManagerInterface
             }
         }
 
-        $this->quizConverter->validateDto($quizDto);
+        $this->quizConverter::validateDto($quizDto, $this->validator);
 
         $quiz = $this->quizRepository->updateQuiz($quiz, $quizDto);
         return $quiz;

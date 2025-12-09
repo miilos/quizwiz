@@ -14,27 +14,16 @@ class ChatHistory
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?string $userId = null;
-
     #[ORM\Column(type: Types::TEXT)]
     private ?string $response = null;
+
+    #[ORM\ManyToOne(inversedBy: 'chatHistories')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?string
-    {
-        return $this->userId;
-    }
-
-    public function setUserId(string $userId): static
-    {
-        $this->userId = $userId;
-
-        return $this;
     }
 
     public function getResponse(): ?string
@@ -45,6 +34,18 @@ class ChatHistory
     public function setResponse(string $response): static
     {
         $this->response = $response;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
