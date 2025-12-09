@@ -20,11 +20,11 @@ class QuizConverterService extends EntityConverter
     /** @throws UnprocessableEntityHttpException */
     public function toDto(array $data): QuizDto
     {
-        $quizDto = new QuizDto();
-        $quizDto->setTitle($data['title'] ?? null);
-        $quizDto->setDescription($data['description'] ?? null);
-        $quizDto->setQuestions($data['questions'] ?? []);
-        $quizDto->setUser($data['user'] ?? null);
+        $quizDto = (new QuizDto())
+            ->setTitle($data['title'] ?? null)
+            ->setDescription($data['description'] ?? null)
+            ->setQuestions($data['questions'] ?? [])
+            ->setUser($data['user'] ?? null);
 
         self::validateDto($quizDto, $this->validator);
 
@@ -38,9 +38,9 @@ class QuizConverterService extends EntityConverter
      */
     public function entityToDto(EntityInterface $quiz): QuizDto
     {
-        $quizDto = new QuizDto();
-        $quizDto->setTitle($quiz->getTitle());
-        $quizDto->setDescription($quiz->getDescription());
+        $quizDto = (new QuizDto())
+            ->setTitle($quiz->getTitle())
+            ->setDescription($quiz->getDescription());
 
         $questionDtos = [];
         /** @var Question $question */
@@ -48,8 +48,9 @@ class QuizConverterService extends EntityConverter
             $questionDtos[] = $this->questionConverter->entityToDto($question);
         }
 
-        $quizDto->setQuestions($questionDtos);
-        $quizDto->setUser($quiz->getAuthor());
+        $quizDto
+            ->setQuestions($questionDtos)
+            ->setUser($quiz->getAuthor());
 
         return $quizDto;
     }

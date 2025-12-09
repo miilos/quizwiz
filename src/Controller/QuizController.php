@@ -58,7 +58,7 @@ class QuizController extends AbstractController
     #[Route('/api/quizzes', methods: ['POST'])]
     public function createQuiz(
         Request $request,
-        DecoderInterface $decoder,
+        DecoderInterface $decoder
     ): JsonResponse
     {
         $user = self::getLoggedInUser($this->security, 'You must be logged in to create a quiz.');

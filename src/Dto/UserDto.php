@@ -26,9 +26,11 @@ class UserDto
         return $this->username;
     }
 
-    public function setUsername(?string $username): void
+    public function setUsername(?string $username): self
     {
         $this->username = $username;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -36,9 +38,11 @@ class UserDto
         return $this->email;
     }
 
-    public function setEmail(?string $email): void
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
     }
 
     public function getPassword(): ?string
@@ -46,9 +50,11 @@ class UserDto
         return $this->password;
     }
 
-    public function setPassword(?string $password): void
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
+
+        return $this;
     }
 
     public function getRoles(): array
@@ -56,9 +62,11 @@ class UserDto
         return $this->roles;
     }
 
-    public function setRoles(array $roles): void
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
     }
 
     public function getAccountActivationToken(): ?string
@@ -66,8 +74,10 @@ class UserDto
         return $this->accountActivationToken;
     }
 
-    public function setAccountActivationToken(?string $accountActivationToken): void
+    public function setAccountActivationToken(?string $accountActivationToken): self
     {
         $this->accountActivationToken = $accountActivationToken;
+
+        return $this;
     }
 }

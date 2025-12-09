@@ -17,9 +17,9 @@ class QuestionConverterService extends EntityConverter
 
     public function toDto(array $data): QuestionDto
     {
-        $questionDto = new QuestionDto();
-        $questionDto->setText($data['text'] ?? null);
-        $questionDto->setOptions($data['options'] ?? null);
+        $questionDto = (new QuestionDto())
+            ->setText($data['text'] ?? null)
+            ->setOptions($data['options'] ?? null);
 
         if (!isset($data['correctAnswer'])) {
             $questionDto->setCorrectAnswer([]);
@@ -31,10 +31,10 @@ class QuestionConverterService extends EntityConverter
             $questionDto->setCorrectAnswer($data['correctAnswer']);
         }
 
-        $questionDto->setQuiz($data['quiz'] ?? null);
-        $questionDto->setType($data['type'] ?? null);
-        $questionDto->setExplanation($data['explanation'] ?? null);
-        $questionDto->setPosition($data['position'] ?? null);
+        $questionDto->setQuiz($data['quiz'] ?? null)
+            ->setType($data['type'] ?? null)
+            ->setExplanation($data['explanation'] ?? null)
+            ->setPosition($data['position'] ?? null);
 
         // throws exception if it doesn't pass validation
         self::validateDto($questionDto, $this->validator);
@@ -47,15 +47,13 @@ class QuestionConverterService extends EntityConverter
      */
     public function entityToDto(EntityInterface $question): QuestionDto
     {
-        $questionDto = new QuestionDto();
-        $questionDto->setText($question->getText());
-        $questionDto->setOptions($question->getOptions());
-        $questionDto->setQuiz($question->getQuiz());
-        $questionDto->setCorrectAnswer($question->getCorrectAnswer());
-        $questionDto->setPosition($question->getPosition());
-        $questionDto->setType($question->getType()->value);
-        $questionDto->setExplanation($question->getExplanation());
-
-        return $questionDto;
+        return (new QuestionDto())
+            ->setText($question->getText())
+            ->setOptions($question->getOptions())
+            ->setQuiz($question->getQuiz())
+            ->setCorrectAnswer($question->getCorrectAnswer())
+            ->setPosition($question->getPosition())
+            ->setType($question->getType()->value)
+            ->setExplanation($question->getExplanation());
     }
 }

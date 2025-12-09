@@ -30,9 +30,11 @@ class QuizDto implements EntityDtoInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): void
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
+
+        return $this;
     }
 
     public function getDescription(): ?string
@@ -40,9 +42,11 @@ class QuizDto implements EntityDtoInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     public function getQuestions(): array
@@ -50,9 +54,11 @@ class QuizDto implements EntityDtoInterface
         return $this->questions;
     }
 
-    public function setQuestions(array $questions): void
+    public function setQuestions(array $questions): self
     {
         $this->questions = $questions;
+
+        return $this;
     }
 
     public function getUser(): ?User
@@ -60,8 +66,10 @@ class QuizDto implements EntityDtoInterface
         return $this->user;
     }
 
-    public function setUser(?User $user): void
+    public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
     }
 }

@@ -40,9 +40,11 @@ class QuestionDto implements EntityDtoInterface
         return $this->text;
     }
 
-    public function setText(?string $text): void
+    public function setText(?string $text): self
     {
         $this->text = $text;
+
+        return $this;
     }
 
     public function getOptions(): array
@@ -50,9 +52,11 @@ class QuestionDto implements EntityDtoInterface
         return $this->options;
     }
 
-    public function setOptions(array $options): void
+    public function setOptions(array $options): self
     {
         $this->options = $options;
+
+        return $this;
     }
 
     public function getQuiz(): ?Quiz
@@ -60,9 +64,11 @@ class QuestionDto implements EntityDtoInterface
         return $this->quiz;
     }
 
-    public function setQuiz(?Quiz $quiz): void
+    public function setQuiz(?Quiz $quiz): self
     {
         $this->quiz = $quiz;
+
+        return $this;
     }
 
     public function getCorrectAnswer(): array
@@ -70,9 +76,11 @@ class QuestionDto implements EntityDtoInterface
         return $this->correctAnswer;
     }
 
-    public function setCorrectAnswer(array $correctAnswer): void
+    public function setCorrectAnswer(array $correctAnswer): self
     {
         $this->correctAnswer = $correctAnswer;
+
+        return $this;
     }
 
     public function getPosition(): ?int
@@ -80,9 +88,11 @@ class QuestionDto implements EntityDtoInterface
         return $this->position;
     }
 
-    public function setPosition(?int $position): void
+    public function setPosition(?int $position): self
     {
         $this->position = $position;
+
+        return $this;
     }
 
     public function getType(): ?string
@@ -90,9 +100,11 @@ class QuestionDto implements EntityDtoInterface
         return $this->type;
     }
 
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     public function getExplanation(): ?string
@@ -100,8 +112,10 @@ class QuestionDto implements EntityDtoInterface
         return $this->explanation;
     }
 
-    public function setExplanation(?string $explanation): void
+    public function setExplanation(?string $explanation): self
     {
         $this->explanation = $explanation;
+
+        return $this;
     }
 }
