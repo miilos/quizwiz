@@ -19,10 +19,10 @@ class QuizManagerService implements ResourceManagerInterface
     ];
 
     public function __construct(
-        private QuizRepository $quizRepository,
-        private QuestionManagerService $questionManager,
-        private QuizConverterService $quizConverter,
-        private ValidatorInterface $validator,
+        private readonly QuizRepository $quizRepository,
+        private readonly QuestionManagerService $questionManager,
+        private readonly QuizConverterService $quizConverter,
+        private readonly ValidatorInterface $validator,
     ) {}
 
     public function search(QuizSearchCriteriaDto $searchCriteria): array
