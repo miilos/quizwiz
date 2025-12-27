@@ -1,0 +1,13 @@
+Query:
+    type: object
+    config:
+        fields:
+            quizzes:
+                type: "[Quiz]"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuizzes", args)'
+            quiz:
+                type: "Quiz"
+                args:
+                    id:
+                        type: "Int!"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuiz", args)'

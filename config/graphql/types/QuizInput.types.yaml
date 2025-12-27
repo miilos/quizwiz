@@ -1,0 +1,15 @@
+QuizInput:
+    type: input-object
+    config:
+        fields:
+            title: "String!"
+            description: "String"
+            questions: "[QuestionInput]!"
+
+UpdateQuizInput:
+    type: input-object
+    config:
+        fields:
+            title: "String!"
+            description: "String"
+            questions: "[UpdateQuestionInput]!"

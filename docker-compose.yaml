@@ -49,3 +49,7 @@ services:
 
 volumes:
     mysql_data:
+
+networks:
+    quizwiz-network:
+        external: true

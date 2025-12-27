@@ -1,0 +1,22 @@
+overblog_graphql:
+    definitions:
+        schema:
+            query: Query
+            mutation: Mutation
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.project_dir%/config/graphql/types"
+                    suffix: null
+
+overblog_dataloader:
+    defaults:
+        promise_adapter: "overblog_dataloader.webonyx_graphql_sync_promise_adapter"
+    loaders:
+        questions:
+            alias: "question_loader"
+            batch_load_fn: "@app.graph.question_loader:all"
+        authors:
+            alias: "user_loader"
+            batch_load_fn: "@app.graph.user_loader:all"

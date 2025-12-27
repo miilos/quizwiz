@@ -1,0 +1,19 @@
+QuestionInput:
+    type: input-object
+    config:
+        fields:
+            text: "String!"
+            options: "[String]!"
+            correctAnswer: "[Int]!"
+            type: "String!"
+            explanation: "String"
+
+UpdateQuestionInput:
+    type: input-object
+    config:
+        fields:
+            id: "Int!"
+            text: "String!"
+            options: "[String]!"
+            correctAnswer: "[Int]!"
+            explanation: "String"

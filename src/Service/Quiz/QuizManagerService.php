@@ -81,7 +81,7 @@ class QuizManagerService implements ResourceManagerInterface
 
         $this->quizConverter::validateDto($quizDto, $this->validator);
 
-        $quiz = $this->quizRepository->updateQuiz($quiz, $quizDto);
+        $quiz = $this->quizRepository->updateQuiz($quiz->getId(), $quizDto);
         return $quiz;
     }
 

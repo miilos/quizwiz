@@ -65,8 +65,9 @@ class QuizRepository extends ServiceEntityRepository
         return $quiz;
     }
 
-    public function updateQuiz(Quiz $quiz, QuizDto $quizDto): Quiz
+    public function updateQuiz(int $quizId, QuizDto $quizDto): Quiz
     {
+        $quiz = $this->findOneBy(['id' => $quizId]);
         $quiz->setTitle($quizDto->getTitle());
         $quiz->setDescription($quizDto->getDescription());
 

@@ -37,4 +37,23 @@ class QuestionRepository extends ServiceEntityRepository
         $this->entityManager->flush();
         return $question;
     }
+
+    public function updateQuestion(int $questionId, QuestionDto $questionDto): Question
+    {
+        $question = $this->findOneBy(['id' => $questionId]);
+        $question->setText($questionDto->getText());
+        $question->setOptions($questionDto->getOptions());
+        $question->setCorrectAnswer($questionDto->getCorrectAnswer());
+        $question->setExplanation($questionDto->getExplanation());
+
+        $this->entityManager->persist($question);
+        $this->entityManager->flush();
+        return $question;
+    }
+
+    public function deleteQuestion(Question $question): void
+    {
+        $this->entityManager->remove($question);
+        $this->entityManager->flush();
+    }
 }

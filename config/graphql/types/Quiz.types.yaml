@@ -1,0 +1,14 @@
+Quiz:
+    type: object
+    config:
+        fields:
+            id: "Int!"
+            title: "String"
+            description: "String!"
+            author:
+                type: "User!"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveAuthor", value)'
+            createdAt: "DateTime"
+            questions:
+                type: "[Question]!"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuestions", value)'

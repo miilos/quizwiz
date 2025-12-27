@@ -10,24 +10,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 class QuestionDto implements EntityDtoInterface
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'You must define question text.')]
+        #[Assert\NotBlank(
+            message: 'You must define question text.',
+            groups: ['Default', 'Update'],
+        )]
         #[Groups(['full_quiz_data'])]
         private ?string $text = null,
 
-        #[Assert\Count(min: 2, minMessage: 'A question must have at least two options.')]
+        #[Assert\Count(
+            min: 2,
+            minMessage: 'A question must have at least two options.',
+            groups: ['Default', 'Update'],
+        )]
         #[Groups(['full_quiz_data'])]
         private array $options = [],
 
         private ?Quiz $quiz = null,
 
-        #[Assert\Count(min: 1, minMessage: 'A question must have at least one correct answer.')]
+        #[Assert\Count(
+            min: 1,
+            minMessage: 'A question must have at least one correct answer.',
+            groups: ['Default', 'Update'],
+        )]
         #[Groups(['full_quiz_data'])]
         private array $correctAnswer = [],
 
         #[Groups(['full_quiz_data'])]
         private ?int $position = null,
 
-        #[Assert\Choice(callback: [QuestionTypes::class, 'getValues'], message: 'Not a valid question type.')]
+        #[Assert\Choice(
+            callback: [QuestionTypes::class, 'getValues'], message: 'Not a valid question type.',
+            groups: ['Default']
+        )]
         #[Groups(['full_quiz_data'])]
         private ?string $type = null,
 

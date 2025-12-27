@@ -17,7 +17,6 @@ class QuizDto implements EntityDtoInterface
         private ?string $description = null,
 
         /** @var QuestionDto[] $questions */
-        #[Assert\Count(min: 1, minMessage: 'You must have at least one question.')]
         #[Groups(['full_quiz_data'])]
         private array $questions = [],
 

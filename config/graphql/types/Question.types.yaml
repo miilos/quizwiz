@@ -1,0 +1,11 @@
+Question:
+    type: object
+    config:
+        fields:
+            id: "Int!"
+            text: "String!"
+            options: "[String]!"
+            correctAnswer: "[Int]!"
+            type: "String"
+            position: "Int!"
+            explanation: "String"
