@@ -12,7 +12,7 @@ class GraphQLUserErrorService
         $errorMessage = 'Validation failed.\n';
 
         foreach ($violations as $violation) {
-            $errorMessage .= sprintf('%s: %s/n',
+            $errorMessage .= sprintf('%s: %s\n',
                 $violation->getPropertyPath(),
                 $violation->getMessage()
             );

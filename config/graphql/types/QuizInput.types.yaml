@@ -5,6 +5,7 @@ QuizInput:
             title: "String!"
             description: "String"
             questions: "[QuestionInput]!"
+            tags: "[TagInput]"
 
 UpdateQuizInput:
     type: input-object

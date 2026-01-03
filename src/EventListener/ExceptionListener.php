@@ -40,10 +40,12 @@ class ExceptionListener
 
     private function getResponse(\Throwable $t): JsonResponse
     {
+        $statusCode = $t->getCode() !== 0 ?: 500;
+
         return new JsonResponse([
             'status' => 'error',
             'message' => $t->getMessage(),
-        ], $t->getCode());
+        ], $statusCode);
     }
 
     private function handleValidationErrorException(UnprocessableEntityHttpException $exception): JsonResponse

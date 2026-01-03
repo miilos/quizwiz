@@ -5,9 +5,15 @@ namespace App\GraphQL\Mutation;
 use App\Controller\LoggedInUserAwareTrait;
 use App\Dto\QuestionDto;
 use App\Dto\QuizDto;
+use App\Entity\Enum\QuestionTypes;
+use App\Entity\Question;
+use App\Entity\Quiz;
+use App\Entity\Trait\EntityValidatorTrait;
 use App\GraphQL\GraphQLUserErrorService;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizRepository;
+use App\Service\TagManagerService;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
@@ -19,6 +25,7 @@ use Throwable;
 class QuizMutation implements MutationInterface
 {
     use LoggedInUserAwareTrait;
+    use EntityValidatorTrait;
 
     public function __construct(
         private readonly Security $security,
@@ -26,6 +33,7 @@ class QuizMutation implements MutationInterface
         private readonly ValidatorInterface $validator,
         private readonly QuizRepository $quizRepository,
         private readonly QuestionRepository $questionRepository,
+        private readonly TagManagerService  $tagManager,
     ) {}
 
     public function createQuiz(Argument $args): int
@@ -34,45 +42,43 @@ class QuizMutation implements MutationInterface
             $quizData = $args['quiz'];
             $user = $this->getLoggedInUser($this->security);
 
-            $questionDtos = [];
-            $questionPosition = 1;
-            foreach ($quizData['questions'] as $question) {
-                $questionDto = (new QuestionDto())
-                    ->setText($question['text'])
-                    ->setOptions($question['options'])
-                    ->setCorrectAnswer($question['correctAnswer'])
-                    ->setPosition($questionPosition)
-                    ->setType($question['type'])
-                    ->setExplanation($question['explanation']);
-
-                $violations = $this->validator->validate($questionDto);
-                if (count($violations) > 0) {
-                    GraphQLUserErrorService::throwValidationFailedUserError($violations);
-                }
-
-                $questionDtos[] = $questionDto;
-                $questionPosition++;
-            }
-
-            $quizDto = (new QuizDto())
+            $quiz = (new Quiz())
                 ->setTitle($quizData['title'])
                 ->setDescription($quizData['description'] ?? null)
-                ->setQuestions($questionDtos)
-                ->setUser($user);
+                ->setAuthor($user)
+                ->setCreatedAt(new DateTimeImmutable());
 
-            $violations = $this->validator->validate($quizDto);
-            if (count($violations) > 0) {
-                GraphQLUserErrorService::throwValidationFailedUserError($violations);
+            self::validate($quiz, $this->validator);
+
+            if (isset($quizData['tags'])) {
+                $tags = $this->tagManager->getOrCreateQuizTags($quizData['tags'], $quiz);
+
+                foreach ($tags as $tag) {
+                    $quiz->addTag($tag);
+                    $this->entityManager->persist($tag);
+                }
             }
 
-            $quizEntity = $this->quizRepository->createQuiz($quizDto);
+            $position = 1;
+            foreach ($quizData['questions'] as $questionData) {
+                $question = (new Question())
+                    ->setQuiz($quiz)
+                    ->setText($questionData['text'])
+                    ->setOptions($questionData['options'])
+                    ->setCorrectAnswer($questionData['correctAnswer'])
+                    ->setType(QuestionTypes::tryFrom($questionData['type']))
+                    ->setPosition($position++)
+                    ->setExplanation($questionData['explanation'] ?? null);
 
-            foreach ($questionDtos as $questionDto) {
-                $questionDto->setQuiz($quizEntity);
-                $this->questionRepository->createQuestion($questionDto);
+                self::validate($question, $this->validator);
+
+                $this->entityManager->persist($question);
             }
 
-            return $quizEntity->getId();
+            $this->entityManager->persist($quiz);
+            $this->entityManager->flush();
+
+            return $quiz->getId();
         }
         catch (Throwable $e) {
             throw new UserError($e->getMessage());
@@ -123,11 +129,16 @@ class QuizMutation implements MutationInterface
         try {
             $quiz = $this->quizRepository->findOneBy(['id' => $args['id']]);
 
-            foreach ($quiz->getQuestions() as $question) {
-                $this->questionRepository->deleteQuestion($question);
+            foreach ($quiz->getTags() as $tag) {
+                $tag->removeQuiz($quiz);
             }
 
-            $this->quizRepository->deleteQuiz($quiz);
+            foreach ($quiz->getQuestions() as $question) {
+                $this->entityManager->remove($question);
+            }
+
+            $this->entityManager->remove($quiz);
+            $this->entityManager->flush();
 
             return true;
         }

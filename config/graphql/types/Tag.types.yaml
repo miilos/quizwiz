@@ -1,0 +1,7 @@
+Tag:
+    type: object
+    config:
+        fields:
+            id: "Int!"
+            name: "String!"
+            displayName: "String!"

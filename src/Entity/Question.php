@@ -7,6 +7,7 @@ use App\Repository\QuestionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question implements EntityInterface
@@ -23,14 +24,28 @@ class Question implements EntityInterface
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['full_quiz_data'])]
+    #[Assert\NotBlank(
+        message: 'You must define question text.',
+        groups: ['Default', 'Update'],
+    )]
     private ?string $text = null;
 
     #[ORM\Column(type: Types::JSON)]
     #[Groups(['full_quiz_data'])]
+    #[Assert\Count(
+        min: 2,
+        minMessage: 'A question must have at least two options.',
+        groups: ['Default', 'Update'],
+    )]
     private array $options = [];
 
     #[ORM\Column(type: Types::JSON)]
     #[Groups(['full_quiz_data'])]
+    #[Assert\Count(
+        min: 1,
+        minMessage: 'A question must have at least one correct answer.',
+        groups: ['Default', 'Update'],
+    )]
     private ?array $correctAnswer = [];
 
     #[ORM\Column]
@@ -39,6 +54,7 @@ class Question implements EntityInterface
 
     #[ORM\Column(enumType: QuestionTypes::class)]
     #[Groups(['full_quiz_data'])]
+    #[Assert\NotNull(message: 'You must select a question type.')]
     private ?QuestionTypes $type = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 class Quiz implements EntityInterface
@@ -20,6 +21,7 @@ class Quiz implements EntityInterface
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['full_quiz_data'])]
+    #[Assert\NotBlank(message: 'You must title your quiz.')]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -49,10 +51,17 @@ class Quiz implements EntityInterface
     #[Groups(['full_quiz_data'])]
     private Collection $attempts;
 
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'quiz')]
+    private Collection $tags;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
         $this->attempts = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +172,33 @@ class Quiz implements EntityInterface
             if ($attempt->getQuiz() === $this) {
                 $attempt->setQuiz(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addQuiz($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeQuiz($this);
         }
 
         return $this;

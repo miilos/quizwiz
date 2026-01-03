@@ -1,0 +1,5 @@
+TagInput:
+    type: input-object
+    config:
+        fields:
+            name: "String!"

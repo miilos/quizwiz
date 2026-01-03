@@ -33,4 +33,9 @@ class QuizResolver implements QueryInterface
     {
         return $this->quizRepository->findOneById($args->offsetGet('id'));
     }
+
+    public function resolveTags(Quiz $quiz): ?array
+    {
+        return $quiz->getTags()->toArray();
+    }
 }
