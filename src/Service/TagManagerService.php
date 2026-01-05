@@ -42,6 +42,42 @@ class TagManagerService
         return $tags;
     }
 
+    public function updateQuizTags(array $inputTags, Quiz $quiz): array
+    {
+        $outputTags = $quiz->getTags();
+
+        $formattedInputTags = array_map(static function($inputTag) {
+            return self::formatTagName($inputTag['name']);
+        }, $inputTags);
+
+        foreach ($quiz->getTags() as $tag) {
+            if (!in_array($tag->getName(), $formattedInputTags)) {
+                $quiz->removeTag($tag);
+                $outputTags->removeElement($tag);
+            }
+        }
+
+        $quizTagNames = array_map(static fn($tag) => $tag->getName(), $quiz->getTags()->toArray());
+        $tagsToAdd = array_diff($formattedInputTags, $quizTagNames);
+
+        foreach ($tagsToAdd as $tagName) {
+            $tag = $this->tagRepository->findOneBy(['name' => $tagName]);
+
+            if (!$tag) {
+                $tag = (new Tag())
+                    ->setName($tagName)
+                    ->setDisplayName(self::formatTagDisplayName($tagName));
+
+                self::validate($tag, $this->validator);
+            }
+
+            $quiz->addTag($tag);
+            $outputTags->add($tag);
+        }
+
+        return $outputTags->toArray();
+    }
+
     private static function formatTagName(string $tagName): string
     {
         $name = trim(strtolower($tagName));

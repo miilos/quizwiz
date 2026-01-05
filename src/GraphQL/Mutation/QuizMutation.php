@@ -12,6 +12,7 @@ use App\Entity\Trait\EntityValidatorTrait;
 use App\GraphQL\GraphQLUserErrorService;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizRepository;
+use App\Service\QuestionCreateUpdateService;
 use App\Service\TagManagerService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +34,7 @@ class QuizMutation implements MutationInterface
         private readonly ValidatorInterface $validator,
         private readonly QuizRepository $quizRepository,
         private readonly QuestionRepository $questionRepository,
+        private readonly QuestionCreateUpdateService  $questionCreateUpdateService,
         private readonly TagManagerService  $tagManager,
     ) {}
 
@@ -91,32 +93,29 @@ class QuizMutation implements MutationInterface
             $quiz = $this->quizRepository->findOneById($args['id']);
             $quizArgs = $args['quiz'];
 
-            foreach ($quizArgs['questions'] as $question) {
-                $questionDto = (new QuestionDto())
-                    ->setText($question['text'])
-                    ->setOptions($question['options'])
-                    ->setCorrectAnswer($question['correctAnswer'])
-                    ->setExplanation($question['explanation']);
-
-                $violations = $this->validator->validate($questionDto, groups: ['Update']);
-                if (count($violations) > 0) {
-                    GraphQLUserErrorService::throwValidationFailedUserError($violations);
-                }
-
-                $this->questionRepository->updateQuestion($question['id'], $questionDto);
+            if (!$quiz) {
+                throw new UserError(sprintf('Quiz with id "%s" not found.', $args['id']));
             }
 
-            $quizDto = (new QuizDto())
+            $quiz
                 ->setTitle($quizArgs['title'])
                 ->setDescription($quizArgs['description'] ?? null);
 
-            $violations = $this->validator->validate($quizDto);
-            if (count($violations) > 0) {
-                GraphQLUserErrorService::throwValidationFailedUserError($violations);
+            if (isset($quizArgs['tags'])) {
+                $tags = $this->tagManager->updateQuizTags($quizArgs['tags'], $quiz);
+
+                foreach ($tags as $tag) {
+                    $quiz->addTag($tag);
+                    $this->entityManager->persist($tag);
+                }
             }
 
-            $this->quizRepository->updateQuiz($quiz->getId(), $quizDto);
+            $updatedQuestions = $this->questionCreateUpdateService->updateQuizQuestions($quizArgs['questions'], $quiz);
+            foreach ($updatedQuestions as $question) {
+                $this->entityManager->persist($question);
+            }
 
+            $this->entityManager->flush();
             return true;
         }
         catch (Throwable $e) {
@@ -128,6 +127,10 @@ class QuizMutation implements MutationInterface
     {
         try {
             $quiz = $this->quizRepository->findOneBy(['id' => $args['id']]);
+
+            if (!$quiz) {
+                throw new UserError(sprintf('Quiz with id "%s" not found.', $args['id']));
+            }
 
             foreach ($quiz->getTags() as $tag) {
                 $tag->removeQuiz($quiz);

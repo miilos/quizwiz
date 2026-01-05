@@ -14,3 +14,4 @@ UpdateQuizInput:
             title: "String!"
             description: "String"
             questions: "[UpdateQuestionInput]!"
+            tags: "[TagInput]"

@@ -16,4 +16,5 @@ UpdateQuestionInput:
             text: "String!"
             options: "[String]!"
             correctAnswer: "[Int]!"
+            type: "String"
             explanation: "String"
