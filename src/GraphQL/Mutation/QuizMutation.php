@@ -90,7 +90,7 @@ class QuizMutation implements MutationInterface
     public function updateQuiz(Argument $args): bool
     {
         try {
-            $quiz = $this->quizRepository->findOneById($args['id']);
+            $quiz = $this->quizRepository->findOneBy(['id' => $args['id']]);
             $quizArgs = $args['quiz'];
 
             if (!$quiz) {

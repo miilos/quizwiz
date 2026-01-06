@@ -19,12 +19,12 @@ class Quiz implements EntityInterface
     #[Groups(['full_quiz_data'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['full_quiz_data'])]
     #[Assert\NotBlank(message: 'You must title your quiz.')]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     #[Groups(['full_quiz_data'])]
     private ?string $description = null;
 

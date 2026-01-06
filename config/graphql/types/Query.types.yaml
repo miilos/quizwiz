@@ -11,3 +11,15 @@ Query:
                     id:
                         type: "Int!"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuiz", args)'
+            searchQuizzes:
+                type: "[Quiz]"
+                args:
+                    searchParams:
+                        type: "SearchQuizInput!"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuizSearch", args)'
+            filterByTags:
+                type: "[Quiz]"
+                args:
+                    tagIds:
+                        type: "[Int!]"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveFilterByTags", args)'

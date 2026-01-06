@@ -15,3 +15,9 @@ UpdateQuizInput:
             description: "String"
             questions: "[UpdateQuestionInput]!"
             tags: "[TagInput]"
+
+SearchQuizInput:
+    type: input-object
+    config:
+        fields:
+            keywords: "String"

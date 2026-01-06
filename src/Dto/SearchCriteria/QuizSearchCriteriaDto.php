@@ -5,16 +5,18 @@ namespace App\Dto\SearchCriteria;
 class QuizSearchCriteriaDto
 {
     public function __construct(
-        private ?string $title = null
+        private ?string $keywords = null
     ) {}
 
-    public function getTitle(): ?string
+    public function getKeywords(): ?string
     {
-        return $this->title;
+        return $this->keywords;
     }
 
-    public function setTitle(?string $title): void
+    public function setKeywords(?string $keywords): self
     {
-        $this->title = $title;
+        $this->keywords = $keywords;
+
+        return $this;
     }
 }

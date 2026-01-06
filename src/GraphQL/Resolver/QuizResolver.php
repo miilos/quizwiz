@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Resolver;
 
+use App\Dto\SearchCriteria\QuizSearchCriteriaDto;
 use App\Entity\Quiz;
 use App\Entity\User;
 use App\Repository\QuizRepository;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
+use Overblog\GraphQLBundle\Error\UserError;
 
 class QuizResolver implements QueryInterface
 {
@@ -31,11 +33,34 @@ class QuizResolver implements QueryInterface
 
     public function resolveQuiz(Argument $args): ?Quiz
     {
-        return $this->quizRepository->findOneById($args->offsetGet('id'));
+        return $this->quizRepository->findOneBy(['id' => $args->offsetGet('id')]);
     }
 
     public function resolveTags(Quiz $quiz): ?array
     {
         return $quiz->getTags()->toArray();
+    }
+
+    public function resolveQuizSearch(Argument $args): array
+    {
+        $keywords = $args->offsetGet('searchParams')['keywords'] ?? '';
+
+        $criteria = (new QuizSearchCriteriaDto())
+            ->setKeywords($keywords);
+
+        $result = $this->quizRepository->searchQuizzes($criteria);
+        $quizIds = array_unique(array_column($result, 'id'));
+
+        if (empty($quizIds)) {
+            return [];
+        }
+
+        return $this->quizRepository->findBy(['id' => $quizIds]);
+    }
+
+    public function resolveFilterByTags(Argument $args): array
+    {
+        $tagIds = $args->offsetGet('tagIds');
+        return $this->quizRepository->filterByTags($tagIds);
     }
 }
