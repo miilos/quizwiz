@@ -3,44 +3,37 @@
 namespace App\Service\Converter;
 
 use App\Dto\QuizDto;
+use App\Dto\TagDto;
 use App\Entity\EntityInterface;
 use App\Entity\Question;
+use App\Entity\Quiz;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuizConverterService extends EntityConverter
+class QuizConverterService
 {
-    use ValidatesDtoTrait;
-
     public function __construct(
-        private ValidatorInterface $validator,
         private QuestionConverterService $questionConverter,
     ) {}
 
-    /** @throws UnprocessableEntityHttpException */
-    public function toDto(array $data): QuizDto
+    public function entityToDto(Quiz $quiz): QuizDto
     {
         $quizDto = (new QuizDto())
-            ->setTitle($data['title'] ?? null)
-            ->setDescription($data['description'] ?? null)
-            ->setQuestions($data['questions'] ?? [])
-            ->setUser($data['user'] ?? null);
-
-        self::validateDto($quizDto, $this->validator);
-
-        return $quizDto;
-    }
-
-    /**
-     * creates a dto first in order to use the validator component
-     * to validate the new data and creates the updates
-     * in the db afterward
-     */
-    public function entityToDto(EntityInterface $quiz): QuizDto
-    {
-        $quizDto = (new QuizDto())
+            ->setId($quiz->getId())
             ->setTitle($quiz->getTitle())
             ->setDescription($quiz->getDescription());
+
+        if ($quiz->getTags()) {
+            $tagDtos = [];
+            foreach ($quiz->getTags() as $tag) {
+                $tagDtos[] = (new TagDto())
+                    ->setId($tag->getId())
+                    ->setName($tag->getName())
+                    ->setDisplayName($tag->getDisplayName());
+            }
+
+            $quizDto->setTags($tagDtos);
+        }
 
         $questionDtos = [];
         /** @var Question $question */
@@ -50,8 +43,20 @@ class QuizConverterService extends EntityConverter
 
         $quizDto
             ->setQuestions($questionDtos)
-            ->setUser($quiz->getAuthor());
+            ->setAuthor($quiz->getAuthor())
+            ->setCreatedAt($quiz->getCreatedAt());
 
         return $quizDto;
+    }
+
+    public function entityArrayToDtoArray(array $entityArray): array
+    {
+        $dtoArray = [];
+
+        foreach ($entityArray as $entity) {
+            $dtoArray[] = $this->entityToDto($entity);
+        }
+
+        return $dtoArray;
     }
 }

@@ -26,65 +26,6 @@ class QuizRepository extends ServiceEntityRepository
         $this->entityManager = $entityManager;
     }
 
-    public function findOneById(int $id): ?Quiz
-    {
-        return $this->createQueryBuilder('quiz')
-            ->where('quiz.id = :id')
-            ->setParameter('id', $id)
-            ->leftJoin('quiz.questions', 'questions')
-            ->addSelect('questions')
-            ->leftJoin('quiz.attempts', 'attempts')
-            ->addSelect('attempts')
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    public function createSearch(QuizSearchCriteriaDto $searchCriteria): QueryBuilder
-    {
-        $qb = $this->createQueryBuilder('quiz')
-            ->leftJoin('quiz.questions', 'questions')
-            ->addSelect('questions')
-            ->leftJoin('quiz.attempts', 'attempts')
-            ->addSelect('attempts');
-
-        if ($searchCriteria->getKeywords()) {
-            $qb->andWhere('LOWER(quiz.title) LIKE :title')
-                ->setParameter('title', '%' . strtolower($searchCriteria->getKeywords()) . '%');
-        }
-
-        return $qb;
-    }
-
-    public function createQuiz(QuizDto $quizDto): Quiz
-    {
-        $quiz = new Quiz();
-        $quiz->setTitle($quizDto->getTitle());
-        $quiz->setDescription($quizDto->getDescription());
-        $quiz->setAuthor($quizDto->getUser());
-        $quiz->setCreatedAt(new \DateTimeImmutable('now'));
-
-        $this->entityManager->persist($quiz);
-        $this->entityManager->flush();
-        return $quiz;
-    }
-
-    public function updateQuiz(int $quizId, QuizDto $quizDto): Quiz
-    {
-        $quiz = $this->findOneBy(['id' => $quizId]);
-        $quiz->setTitle($quizDto->getTitle());
-        $quiz->setDescription($quizDto->getDescription());
-
-        $this->entityManager->persist($quiz);
-        $this->entityManager->flush();
-        return $quiz;
-    }
-
-    public function deleteQuiz(Quiz $quiz): void
-    {
-        $this->entityManager->remove($quiz);
-        $this->entityManager->flush();
-    }
-
     public function searchQuizzes(QuizSearchCriteriaDto $searchCriteria): array
     {
         if (strlen($searchCriteria->getKeywords()) < 3) {

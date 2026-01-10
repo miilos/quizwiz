@@ -7,14 +7,8 @@ use App\Entity\EntityInterface;
 use App\Entity\Question;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuestionConverterService extends EntityConverter
+class QuestionConverterService
 {
-    use ValidatesDtoTrait;
-
-    public function __construct(
-        private ValidatorInterface $validator,
-    ) {}
-
     public function toDto(array $data): QuestionDto
     {
         $questionDto = (new QuestionDto())
@@ -36,9 +30,6 @@ class QuestionConverterService extends EntityConverter
             ->setExplanation($data['explanation'] ?? null)
             ->setPosition($data['position'] ?? null);
 
-        // throws exception if it doesn't pass validation
-        self::validateDto($questionDto, $this->validator);
-
         return $questionDto;
     }
 
@@ -48,6 +39,7 @@ class QuestionConverterService extends EntityConverter
     public function entityToDto(EntityInterface $question): QuestionDto
     {
         return (new QuestionDto())
+            ->setId($question->getId())
             ->setText($question->getText())
             ->setOptions($question->getOptions())
             ->setQuiz($question->getQuiz())

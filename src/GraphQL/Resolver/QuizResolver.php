@@ -2,65 +2,52 @@
 
 namespace App\GraphQL\Resolver;
 
-use App\Dto\SearchCriteria\QuizSearchCriteriaDto;
-use App\Entity\Quiz;
+use App\Dto\QuizDto;
 use App\Entity\User;
-use App\Repository\QuizRepository;
+use App\Service\QuizService;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
-use Overblog\GraphQLBundle\Error\UserError;
 
 class QuizResolver implements QueryInterface
 {
     public function __construct(
-        private readonly QuizRepository $quizRepository,
+        private readonly QuizService $quizService,
     ) {}
 
     public function resolveQuizzes(): array
     {
-        return $this->quizRepository->findAll();
+        return $this->quizService->getAllQuizzes();
     }
 
-    public function resolveQuestions(Quiz $quiz): array
+    public function resolveQuestions(QuizDto $quiz): array
     {
-        return $quiz->getQuestions()->toArray();
+        return $quiz->getQuestions();
     }
 
-    public function resolveAuthor(Quiz $quiz): ?User
+    public function resolveAuthor(QuizDto $quiz): ?User
     {
         return $quiz->getAuthor();
     }
 
-    public function resolveQuiz(Argument $args): ?Quiz
+    public function resolveQuiz(Argument $args): ?QuizDto
     {
-        return $this->quizRepository->findOneBy(['id' => $args->offsetGet('id')]);
+        return $this->quizService->getQuizById($args->offsetGet('id'));
     }
 
-    public function resolveTags(Quiz $quiz): ?array
+    public function resolveTags(QuizDto $quiz): ?array
     {
-        return $quiz->getTags()->toArray();
+        return $quiz->getTags();
     }
 
     public function resolveQuizSearch(Argument $args): array
     {
-        $keywords = $args->offsetGet('searchParams')['keywords'] ?? '';
-
-        $criteria = (new QuizSearchCriteriaDto())
-            ->setKeywords($keywords);
-
-        $result = $this->quizRepository->searchQuizzes($criteria);
-        $quizIds = array_unique(array_column($result, 'id'));
-
-        if (empty($quizIds)) {
-            return [];
-        }
-
-        return $this->quizRepository->findBy(['id' => $quizIds]);
+        $query = $args->offsetGet('searchParams')['keywords'] ?? '';
+        return $this->quizService->searchQuizzes($query);
     }
 
     public function resolveFilterByTags(Argument $args): array
     {
         $tagIds = $args->offsetGet('tagIds');
-        return $this->quizRepository->filterByTags($tagIds);
+        return $this->quizService->filterByTags($tagIds);
     }
 }

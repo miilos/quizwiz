@@ -8,7 +8,7 @@ use App\Entity\Trait\EntityValidatorTrait;
 use App\Repository\TagRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class TagManagerService
+class TagService
 {
     use EntityValidatorTrait;
 

@@ -9,7 +9,7 @@ use App\Entity\Trait\EntityValidatorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuestionCreateUpdateService
+class QuestionService
 {
     use EntityValidatorTrait;
 
@@ -17,6 +17,29 @@ class QuestionCreateUpdateService
         private readonly EntityManagerInterface $entityManager,
         private readonly ValidatorInterface $validator,
     ) {}
+
+    public function createQuestionSet(array $questionsInput, Quiz $quiz): array
+    {
+        $position = 1;
+        $questions = [];
+
+        foreach ($questionsInput as $questionInput) {
+            $question = (new Question())
+                ->setQuiz($quiz)
+                ->setText($questionInput['text'])
+                ->setOptions($questionInput['options'])
+                ->setCorrectAnswer($questionInput['correctAnswer'])
+                ->setType(QuestionTypes::tryFrom($questionInput['type']))
+                ->setPosition($position++)
+                ->setExplanation($questionInput['explanation'] ?? null);
+
+            self::validate($question, $this->validator);
+
+            $questions[] = $question;
+        }
+
+        return $questions;
+    }
 
     public function updateQuizQuestions(array $inputQuestions, Quiz $quiz): array
     {
@@ -76,6 +99,10 @@ class QuestionCreateUpdateService
 
     private static function getNewQuestionPosition(array $updatedQuestions): int
     {
+        if (!$updatedQuestions) {
+            return 1;
+        }
+
         return $updatedQuestions[count($updatedQuestions) - 1]->getPosition() + 1;
     }
 }

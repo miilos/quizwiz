@@ -10,6 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class QuestionDto implements EntityDtoInterface
 {
     public function __construct(
+        #[Groups(['full_quiz_data'])]
+        private ?int $id = null,
+
         #[Assert\NotBlank(
             message: 'You must define question text.',
             groups: ['Default', 'Update'],
@@ -48,6 +51,18 @@ class QuestionDto implements EntityDtoInterface
         #[Groups(['full_quiz_data'])]
         private ?string $explanation = null,
     ) {}
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     public function getText(): ?string
     {
