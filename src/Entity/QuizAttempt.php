@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\QuizAnswerDto;
 use App\Repository\QuizAttemptRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -23,10 +24,6 @@ class QuizAttempt implements EntityInterface
     #[Groups(['full_quiz_data'])]
     private array $answers = [];
 
-    #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
-    private ?int $score = null;
-
     #[ORM\ManyToOne(inversedBy: 'quizAttempts')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['full_quiz_data'])]
@@ -35,6 +32,18 @@ class QuizAttempt implements EntityInterface
     #[ORM\Column]
     #[Groups(['full_quiz_data'])]
     private ?\DateTimeImmutable $attemptedAt = null;
+
+    #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
+    private ?int $correctAnswerCount = null;
+
+    #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
+    private ?int $incorrectAnswerCount = null;
+
+    #[ORM\Column]
+    #[Groups(['full_quiz_data'])]
+    private ?float $percentageScore = null;
 
     public function getId(): ?int
     {
@@ -53,14 +62,22 @@ class QuizAttempt implements EntityInterface
         return $this;
     }
 
+    /** @return QuizAnswerDto[] */
     public function getAnswers(): array
     {
-        return $this->answers;
+        return array_map(
+            static fn($answer) => QuizAnswerDto::fromArray($answer),
+            $this->answers
+        );
     }
 
+    /** @param QuizAnswerDto[] $answers */
     public function setAnswers(array $answers): static
     {
-        $this->answers = $answers;
+        $this->answers = array_map(
+            static fn(QuizAnswerDto $answer) => $answer->toArray(),
+            $answers
+        );
 
         return $this;
     }
@@ -97,6 +114,42 @@ class QuizAttempt implements EntityInterface
     public function setAttemptedAt(\DateTimeImmutable $attemptedAt): static
     {
         $this->attemptedAt = $attemptedAt;
+
+        return $this;
+    }
+
+    public function getCorrectAnswerCount(): ?int
+    {
+        return $this->correctAnswerCount;
+    }
+
+    public function setCorrectAnswerCount(int $correctAnswerCount): static
+    {
+        $this->correctAnswerCount = $correctAnswerCount;
+
+        return $this;
+    }
+
+    public function getIncorrectAnswerCount(): ?int
+    {
+        return $this->incorrectAnswerCount;
+    }
+
+    public function setIncorrectAnswerCount(int $incorrectAnswerCount): static
+    {
+        $this->incorrectAnswerCount = $incorrectAnswerCount;
+
+        return $this;
+    }
+
+    public function getPercentageScore(): ?float
+    {
+        return $this->percentageScore;
+    }
+
+    public function setPercentageScore(float $percentageScore): static
+    {
+        $this->percentageScore = $percentageScore;
 
         return $this;
     }

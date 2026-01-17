@@ -1,0 +1,13 @@
+QuizAttemptInput:
+    type: input-object
+    config:
+        fields:
+            quizId: "Int"
+            answers: "[QuizAttemptAnswer]"
+
+QuizAttemptAnswer:
+    type: input-object
+    config:
+        fields:
+            questionId: "Int"
+            answers: "[Int]"

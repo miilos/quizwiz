@@ -23,3 +23,10 @@ Query:
                     tagIds:
                         type: "[Int!]"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveFilterByTags", args)'
+
+            attemptsForUser:
+                type: "[QuizAttempt]"
+                args:
+                    id:
+                        type: "Int!"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizAttemptResolver::resolveAttemptsForUser", args)'

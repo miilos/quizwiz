@@ -18,3 +18,8 @@ Mutation:
                 resolve: '@=mutation("App\\GraphQL\\Mutation\\QuizMutation::deleteQuiz", args)'
                 args:
                     id: "Int!"
+            createAttempt:
+                type: "Int!"
+                resolve: '@=mutation("App\\GraphQL\\Mutation\\QuizAttemptMutation::createAttempt", args)'
+                args:
+                    attempt: "QuizAttemptInput"

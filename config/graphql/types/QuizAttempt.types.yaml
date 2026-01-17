@@ -1,0 +1,20 @@
+QuizAttempt:
+    type: object
+    config:
+        fields:
+            id: "Int"
+            quiz: "Quiz"
+            user: "User"
+            answers: "[QuizAnswer]"
+            correctAnswerCount: "Int"
+            incorrectAnswerCount: "Int"
+            percentageScore: "Float"
+            attemptedAt: "DateTime"
+
+QuizAnswer:
+    type: object
+    config:
+        fields:
+            questionId: "Int"
+            answers: "[Int]"
+            status: "String"
