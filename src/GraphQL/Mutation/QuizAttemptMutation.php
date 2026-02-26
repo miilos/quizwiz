@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutation;
 
+use App\Entity\QuizAttempt;
 use App\Service\QuizAttemptService;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
@@ -14,11 +15,10 @@ class QuizAttemptMutation implements MutationInterface
         private QuizAttemptService $quizAttemptService
     ) {}
 
-    public function createAttempt(Argument $args): ?int
+    public function createAttempt(Argument $args): ?QuizAttempt
     {
         try {
-            $attempt = $this->quizAttemptService->createQuizAttempt($args['attempt']);
-            return $attempt->getId();
+            return $this->quizAttemptService->createQuizAttempt($args['attempt']);
         }
         catch (Throwable $e) {
             throw new UserError($e->getMessage());

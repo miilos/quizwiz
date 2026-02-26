@@ -19,7 +19,7 @@ Mutation:
                 args:
                     id: "Int!"
             createAttempt:
-                type: "Int!"
+                type: "QuizAttempt!"
                 resolve: '@=mutation("App\\GraphQL\\Mutation\\QuizAttemptMutation::createAttempt", args)'
                 args:
                     attempt: "QuizAttemptInput"

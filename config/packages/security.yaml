@@ -14,16 +14,19 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            stateless: true
             lazy: true
             provider: app_user_provider
             json_login:
                 check_path: login
                 username_path: email
                 password_path: password
+            access_token:
+                token_handler: App\Security\TokenHandler
 
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/signup, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

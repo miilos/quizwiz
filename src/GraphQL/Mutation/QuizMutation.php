@@ -2,23 +2,34 @@
 
 namespace App\GraphQL\Mutation;
 
+use App\Controller\LoggedInUserAwareTrait;
+use App\Exception\AuthException;
 use App\Service\QuizService;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Error\UserError;
+use Symfony\Bundle\SecurityBundle\Security;
 use Throwable;
 
 class QuizMutation implements MutationInterface
 {
+    use LoggedInUserAwareTrait;
+
     public function __construct(
         private readonly QuizService $quizService,
+        private readonly Security $security,
     ) {}
 
     public function createQuiz(Argument $args): int
     {
         try {
-            $quiz = $this->quizService->createQuiz($args->offsetGet('quiz'));
+            $user = self::getLoggedInUser($this->security);
+
+            $quiz = $this->quizService->createQuiz($args->offsetGet('quiz'), $user);
             return $quiz->getId();
+        }
+        catch (AuthException) {
+            throw new UserError('access.denied');
         }
         catch (Throwable $e) {
             throw new UserError($e->getMessage());
@@ -28,6 +39,8 @@ class QuizMutation implements MutationInterface
     public function updateQuiz(Argument $args): bool
     {
         try {
+            self::getLoggedInUser($this->security);
+
             $id = $args->offsetGet('id');
             $inputData = $args->offsetGet('quiz');
 
@@ -39,6 +52,9 @@ class QuizMutation implements MutationInterface
 
             return $quizUpdated;
         }
+        catch (AuthException) {
+            throw new UserError('access.denied');
+        }
         catch (Throwable $e) {
             throw new UserError($e->getMessage());
         }
@@ -47,6 +63,8 @@ class QuizMutation implements MutationInterface
     public function deleteQuiz(Argument $args): bool
     {
         try {
+            self::getLoggedInUser($this->security);
+
             $id = $args->offsetGet('id');
 
             $quizDeleted = $this->quizService->deleteQuiz($id);
@@ -56,6 +74,9 @@ class QuizMutation implements MutationInterface
             }
 
             return $quizDeleted;
+        }
+        catch (AuthException) {
+            throw new UserError('access.denied');
         }
         catch (Throwable $e) {
             throw new UserError($e->getMessage());

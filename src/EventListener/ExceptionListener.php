@@ -40,7 +40,7 @@ class ExceptionListener
 
     private function getResponse(\Throwable $t): JsonResponse
     {
-        $statusCode = $t->getCode() !== 0 ?: 500;
+        $statusCode = $t->getCode() !== 0 ? $t->getCode() : 500;
 
         return new JsonResponse([
             'status' => 'error',

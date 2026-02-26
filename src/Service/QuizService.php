@@ -2,27 +2,24 @@
 
 namespace App\Service;
 
-use App\Controller\LoggedInUserAwareTrait;
 use App\Dto\QuizDto;
 use App\Dto\SearchCriteria\QuizSearchCriteriaDto;
 use App\Entity\Quiz;
 use App\Entity\Trait\EntityValidatorTrait;
+use App\Entity\User;
 use App\Repository\QuizRepository;
 use App\Service\Converter\QuizConverterService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuizService
 {
-    use LoggedInUserAwareTrait;
     use EntityValidatorTrait;
 
     public function __construct(
         private readonly QuizRepository $quizRepository,
         private readonly QuizConverterService $quizConverterService,
-        private readonly Security $security,
         private readonly ValidatorInterface $validator,
         private readonly EntityManagerInterface $entityManager,
         private readonly TagService $tagService,
@@ -68,10 +65,8 @@ class QuizService
         return $this->quizConverterService->entityArrayToDtoArray($quizEntities);
     }
 
-    public function createQuiz(array $inputData): Quiz
+    public function createQuiz(array $inputData, User $user): Quiz
     {
-        $user = $this->getLoggedInUser($this->security);
-
         $quiz = (new Quiz())
             ->setTitle($inputData['title'])
             ->setDescription($inputData['description'] ?? null)

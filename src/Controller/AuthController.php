@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\UserDto;
 use App\Entity\User;
 use App\Exception\AuthException;
+use App\Service\Auth\TokenService;
 use App\Service\Auth\UserManagerService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +19,8 @@ use Symfony\Component\Serializer\Encoder\DecoderInterface;
 class AuthController extends AbstractController
 {
     public function __construct(
-        private UserManagerService $userSignupService
+        private readonly UserManagerService $userSignupService,
+        private readonly TokenService $tokenService,
     ) {}
 
     #[Route('/api/signup', name: 'signup', methods: ['POST'])]
@@ -27,11 +29,13 @@ class AuthController extends AbstractController
     ): JsonResponse
     {
         $user = $this->userSignupService->signUp($user);
+        $token = $this->tokenService->generateToken($user);
 
         return $this->json([
             'status' => 'success',
             'data' => [
                 'user' => $user,
+                'token' => $token->getToken(),
             ]
         ], 201, context: [ 'groups' => 'basicUserInfo' ]);
     }
@@ -48,9 +52,13 @@ class AuthController extends AbstractController
             ]);
         }
 
+        $token = $this->tokenService->generateToken($user);
+
         return $this->json([
             'status' => 'success',
-            'message' => 'Login successful!',
+            'data' => [
+                'token' => $token->getToken(),
+            ]
         ]);
     }
 

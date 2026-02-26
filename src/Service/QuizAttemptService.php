@@ -7,6 +7,7 @@ use App\Dto\QuizAnswerDto;
 use App\Entity\QuizAttempt;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizRepository;
+use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,6 +22,7 @@ class QuizAttemptService
         private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
         private readonly QuizAnswerCheckerService $quizAnswerCheckerService,
+        private readonly UserRepository $userRepository,
     ) {}
 
     public function createQuizAttempt(array $attemptInput): QuizAttempt
