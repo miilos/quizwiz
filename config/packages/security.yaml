@@ -17,10 +17,6 @@ security:
             stateless: true
             lazy: true
             provider: app_user_provider
-            json_login:
-                check_path: login
-                username_path: email
-                password_path: password
             access_token:
                 token_handler: App\Security\TokenHandler
 

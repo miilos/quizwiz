@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\UserDto;
 use App\Entity\User;
 use App\Exception\AuthException;
+use App\Repository\UserRepository;
 use App\Service\Auth\TokenService;
 use App\Service\Auth\UserManagerService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -20,6 +21,7 @@ class AuthController extends AbstractController
 {
     public function __construct(
         private readonly UserManagerService $userSignupService,
+        private readonly UserRepository $userRepository,
         private readonly TokenService $tokenService,
     ) {}
 
@@ -42,14 +44,24 @@ class AuthController extends AbstractController
 
     #[Route('/api/login', name: 'login', methods: ['POST'])]
     public function logIn(
-        #[CurrentUser] ?User $user,
+        Request $request,
     ): JsonResponse
     {
-        if (null === $user) {
-            return $this->json([
-                'status' => 'error',
-                'message' => 'Incorrect email or password.'
-            ]);
+        $email = $request->toArray()['email'] ?? null;
+        $password = $request->toArray()['password'] ?? null;
+
+        if (!$email || !$password) {
+            throw new AuthException('Incorrect email or password!', 401);
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+
+        if (!$user) {
+            throw new AuthException('Incorrect email or password!', 401);
+        }
+
+        if (!password_verify($password, $user->getPassword())) {
+            throw new AuthException('Incorrect email or password!', 401);
         }
 
         $token = $this->tokenService->generateToken($user);
