@@ -69,9 +69,10 @@ class AuthController extends AbstractController
         return $this->json([
             'status' => 'success',
             'data' => [
+                'user' => $user,
                 'token' => $token->getToken(),
             ]
-        ]);
+        ], context: ['groups' => 'basicUserInfo']);
     }
 
     // TODO: put a RedirectResponse with an actual route name or url here once the frontend exists

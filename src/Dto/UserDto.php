@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use App\Validator\EmailNotTaken\EmailNotTaken;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UserDto
@@ -11,6 +12,7 @@ class UserDto
         private ?string $username = null,
 
         #[Assert\Email(message: 'Not a valid email address.')]
+        #[EmailNotTaken]
         private ?string $email = null,
 
         #[Assert\NotBlank(message: 'You must enter a password.')]

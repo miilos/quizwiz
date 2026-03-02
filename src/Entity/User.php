@@ -18,7 +18,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['basicUserInfo', 'full_quiz_data'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
