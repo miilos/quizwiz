@@ -75,6 +75,23 @@ class AuthController extends AbstractController
         ], context: ['groups' => 'basicUserInfo']);
     }
 
+    #[Route('/api/me', name: 'me', methods: ['GET'])]
+    public function me(
+        #[CurrentUser] ?User $user
+    ): JsonResponse
+    {
+        if (null === $user) {
+            throw new AuthException('User not found!', 401);
+        }
+
+        return $this->json([
+            'status' => 'success',
+            'data' => [
+                'user' => $user,
+            ]
+        ], context: ['groups' => 'basicUserInfo']);
+    }
+
     // TODO: put a RedirectResponse with an actual route name or url here once the frontend exists
     #[Route('/api/account/activate/{token}', name: 'activate_account')]
     public function activateAccount(
