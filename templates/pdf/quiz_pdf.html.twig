@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ quiz.title }}</title>
+
+    <style>
+        body {
+            background-color: #f7f2ea;
+        }
+
+        .header {
+            background-color: #322264;
+            color: #f7f2ea;
+            padding: 5px 25px;
+        }
+
+        .title {
+            font-style: italic;
+        }
+
+        .questions {
+            margin-top: 30px;
+        }
+
+        .question {
+            width: 90%;
+            margin: 0 auto 30px auto;
+            border: 1px solid #322264;
+            border-radius: 10px;
+            color: #322264;
+            padding: 0 20px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .question__number {
+            width: 25px;
+            font-weight: bold;
+            padding: 5px 10px;
+            background-color: #322264;
+            color: #f7f2ea;
+            border-radius: 5px;
+        }
+
+        .question__text {
+            font-weight: bold;
+        }
+
+        .question__options {
+            margin-top: 10px;
+        }
+
+        .option-number {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">{{ quiz.title }}</h1>
+        <p class="date">{{ date }}</p>
+    </div>
+
+    <div class="questions">
+        {% for question in quiz.questions %}
+            <div class="question">
+                <h2 class="question__number">{{ question.position }}.</h2>
+                <h2 class="question__text">{{ question.text }}</h2>
+
+                <div class="question__options">
+                    {% for i, option in question.options %}
+                        <p class="question__option">
+                            <span class="option-number">{{ i|toLetter }})</span>
+                            {{ option }}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

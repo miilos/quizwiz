@@ -18,11 +18,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['basicUserInfo', 'full_quiz_data'])]
+    #[Groups(['fullUserInfo', 'basicUserInfo', 'full_quiz_data'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['basicUserInfo', 'full_quiz_data'])]
+    #[Groups(['fullUserInfo', 'basicUserInfo', 'full_quiz_data'])]
     private ?string $email = null;
 
     /**
@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
     private ?\DateTime $passwordResetExpires = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['basicUserInfo', 'full_quiz_data'])]
+    #[Groups(['fullUserInfo', 'basicUserInfo', 'full_quiz_data'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -57,12 +57,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
      * @var Collection<int, Quiz>
      */
     #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'author')]
+    #[Groups(['fullUserInfo'])]
     private Collection $quizzes;
 
     /**
      * @var Collection<int, QuizAttempt>
      */
     #[ORM\OneToMany(targetEntity: QuizAttempt::class, mappedBy: 'user', orphanRemoval: true)]
+    #[Groups(['fullUserInfo'])]
     private Collection $quizAttempts;
 
     /**

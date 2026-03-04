@@ -2,6 +2,8 @@
 
 namespace App\Dto;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 class QuizAnswerDto
 {
     public const STATUS_CORRECT = 'correct';
@@ -12,8 +14,13 @@ class QuizAnswerDto
     ];
 
     public function __construct(
+        #[Groups(['full_quiz_data', 'fullUserInfo'])]
         private ?int $questionId = null,
+
+        #[Groups(['full_quiz_data', 'fullUserInfo'])]
         private array $answers = [],
+
+        #[Groups(['full_quiz_data', 'fullUserInfo'])]
         private ?string $status = null,
     ) {}
 

@@ -71,16 +71,16 @@ class MailerService
                         <table width='100%' cellpadding='0' cellspacing='0' border='0'>
                           <tr>
                             <td align='center' style='padding: 20px 0;'>
-                              <table width='600' cellpadding='0' cellspacing='0' border='0' style='background-color: #ffffff; border-radius: 10px; overflow: hidden;'>
+                              <table width='600' cellpadding='0' cellspacing='0' border='0' style='background-color: #f7f2ea; border-radius: 10px; overflow: hidden;'>
                                 <tr>
-                                  <td style='background-color: cornflowerblue; padding: 20px; text-align: center;'>
-                                    <h1 style='margin: 0; color: white; font-family: Arial, sans-serif; font-size: 24px;'>
+                                  <td style='background-color: #322264; padding: 20px; text-align: center;'>
+                                    <h1 style='margin: 0; color: #f7f2ea; font-family: Arial, sans-serif; font-size: 24px;'>
                                       Welcome to QuizWiz!
                                     </h1>
                                   </td>
                                 </tr>
                                 <tr>
-                                  <td style='padding: 20px; font-family: Arial, sans-serif; color: black; font-size: 16px; line-height: 1.5;'>
+                                  <td style='padding: 20px; font-family: Arial, sans-serif; color: #322264; font-size: 16px; line-height: 1.5;'>
                                     <p style='margin: 20px 0;'>
                                       {{ TEXT }}
                                     </p>
@@ -88,7 +88,7 @@ class MailerService
                                 </tr>
                                 <tr>
                                   <td style='padding: 0 20px 20px 20px; font-family: Arial, sans-serif;'>
-                                    <p style='margin: 0; color: #999999; font-size: 14px;'>
+                                    <p style='margin: 0; color: #f7f2ea; font-size: 14px;'>
                                       Best regards,<br />
                                       The QuizWiz Team
                                     </p>

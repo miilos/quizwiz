@@ -16,16 +16,16 @@ class Quiz implements EntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     #[Assert\NotBlank(message: 'You must title your quiz.')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'quizzes')]
@@ -34,14 +34,14 @@ class Quiz implements EntityInterface
     private ?User $author = null;
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * @var Collection<int, Question>
      */
     #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private Collection $questions;
 
     /**
@@ -55,6 +55,7 @@ class Quiz implements EntityInterface
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'quiz')]
+    #[Groups(['fullUserInfo'])]
     private Collection $tags;
 
     public function __construct()

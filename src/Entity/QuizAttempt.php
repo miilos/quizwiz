@@ -13,7 +13,7 @@ class QuizAttempt implements EntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'attempts')]
@@ -21,7 +21,7 @@ class QuizAttempt implements EntityInterface
     private ?Quiz $quiz = null;
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private array $answers = [];
 
     #[ORM\ManyToOne(inversedBy: 'quizAttempts')]
@@ -30,19 +30,19 @@ class QuizAttempt implements EntityInterface
     private ?User $user = null;
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?\DateTimeImmutable $attemptedAt = null;
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?int $correctAnswerCount = null;
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?int $incorrectAnswerCount = null;
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?float $percentageScore = null;
 
     public function getId(): ?int

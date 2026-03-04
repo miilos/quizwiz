@@ -15,7 +15,7 @@ class Question implements EntityInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
@@ -23,7 +23,7 @@ class Question implements EntityInterface
     private ?Quiz $quiz = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     #[Assert\NotBlank(
         message: 'You must define question text.',
         groups: ['Default', 'Update'],
@@ -31,7 +31,7 @@ class Question implements EntityInterface
     private ?string $text = null;
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     #[Assert\Count(
         min: 2,
         minMessage: 'A question must have at least two options.',
@@ -40,7 +40,7 @@ class Question implements EntityInterface
     private array $options = [];
 
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     #[Assert\Count(
         min: 1,
         minMessage: 'A question must have at least one correct answer.',
@@ -49,16 +49,16 @@ class Question implements EntityInterface
     private ?array $correctAnswer = [];
 
     #[ORM\Column]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?int $position = null;
 
     #[ORM\Column(enumType: QuestionTypes::class)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     #[Assert\NotNull(message: 'You must select a question type.')]
     private ?QuestionTypes $type = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['full_quiz_data'])]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
     private ?string $explanation = null;
 
     public function getId(): ?int

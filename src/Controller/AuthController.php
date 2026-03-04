@@ -89,7 +89,7 @@ class AuthController extends AbstractController
             'data' => [
                 'user' => $user,
             ]
-        ], context: ['groups' => 'basicUserInfo']);
+        ], context: ['groups' => 'fullUserInfo']);
     }
 
     // TODO: put a RedirectResponse with an actual route name or url here once the frontend exists
