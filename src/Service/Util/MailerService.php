@@ -75,7 +75,7 @@ class MailerService
                                 <tr>
                                   <td style='background-color: #322264; padding: 20px; text-align: center;'>
                                     <h1 style='margin: 0; color: #f7f2ea; font-family: Arial, sans-serif; font-size: 24px;'>
-                                      Welcome to QuizWiz!
+                                      QuizWiz
                                     </h1>
                                   </td>
                                 </tr>

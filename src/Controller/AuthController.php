@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -131,13 +132,21 @@ class AuthController extends AbstractController
         ]);
     }
 
-    #[Route('/api/account/password/forgot', name: 'forgot_password')]
+    #[Route('/api/account/password/forgot', name: 'forgot_password', methods: ['POST'])]
     public function forgotPassword(
-        #[CurrentUser] ?User $user,
+        Request $request,
     ): JsonResponse
     {
-        if (null === $user) {
-            throw new AuthException('You need to log in first.');
+        $email = $request->toArray()['email'] ?? null;
+
+        if (!$email) {
+            throw new BadRequestHttpException('No email specified');
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+
+        if (!$user) {
+            throw new BadRequestHttpException('Invalid email address');
         }
 
         $this->userManagerService->createPasswordResetToken($user);
