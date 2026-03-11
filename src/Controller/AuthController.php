@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Encoder\DecoderInterface;
 class AuthController extends AbstractController
 {
     public function __construct(
-        private readonly UserManagerService $userSignupService,
+        private readonly UserManagerService $userManagerService,
         private readonly UserRepository $userRepository,
         private readonly TokenService $tokenService,
     ) {}
@@ -30,7 +30,7 @@ class AuthController extends AbstractController
         #[MapRequestPayload] UserDto $user,
     ): JsonResponse
     {
-        $user = $this->userSignupService->signUp($user);
+        $user = $this->userManagerService->signUp($user);
         $token = $this->tokenService->generateToken($user);
 
         return $this->json([
@@ -92,6 +92,27 @@ class AuthController extends AbstractController
         ], context: ['groups' => 'fullUserInfo']);
     }
 
+    #[Route('/api/account/edit', name: 'edit', methods: ['POST'])]
+    public function editProfile(
+        #[CurrentUser] ?User $user,
+        Request $request,
+    ): JsonResponse
+    {
+        if (!$user) {
+            throw new AuthException('You must log in first!', 401);
+        }
+
+        $data = $request->toArray();
+        $user = $this->userManagerService->editAccount($user, $data);
+
+        return $this->json([
+            'status' => 'success',
+            'data' => [
+                'user' => $user,
+            ]
+        ], context: ['groups' => 'basicUserInfo']);
+    }
+
     // TODO: put a RedirectResponse with an actual route name or url here once the frontend exists
     #[Route('/api/account/activate/{token}', name: 'activate_account')]
     public function activateAccount(
@@ -102,7 +123,7 @@ class AuthController extends AbstractController
             throw new AuthException('Invalid account activation token.');
         }
 
-        $this->userSignupService->activateAccount($user);
+        $this->userManagerService->activateAccount($user);
 
         return $this->json([
             'status' => 'success',
@@ -119,7 +140,7 @@ class AuthController extends AbstractController
             throw new AuthException('You need to log in first.');
         }
 
-        $this->userSignupService->createPasswordResetToken($user);
+        $this->userManagerService->createPasswordResetToken($user);
 
         return $this->json([
             'status' => 'success',
@@ -141,7 +162,7 @@ class AuthController extends AbstractController
             throw new AuthException('Token and password must be sent.');
         }
 
-        $this->userSignupService->resetPassword($token, $newPassword);
+        $this->userManagerService->resetPassword($token, $newPassword);
 
         return $this->json([
             'status' => 'success',

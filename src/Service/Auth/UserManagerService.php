@@ -7,12 +7,14 @@ use App\Entity\User;
 use App\Exception\AuthException;
 use App\Repository\UserRepository;
 use App\Service\Util\MailerService;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserManagerService
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private MailerService $mailer
+        private readonly UserRepository $userRepository,
+        private readonly MailerService $mailer,
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     public function signUp(UserDto $userDto): User
@@ -25,6 +27,22 @@ class UserManagerService
         $userDto->setPassword('');
 
         $this->sendAccountActivationEmail($userDto);
+
+        return $user;
+    }
+
+    public function editAccount(User $user, array $data): User
+    {
+        foreach ($data as $key => $value) {
+            $setterFn = 'set' . ucfirst($key);
+
+            if (method_exists($user, $setterFn)) {
+                $user->$setterFn($value);
+            }
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return $user;
     }

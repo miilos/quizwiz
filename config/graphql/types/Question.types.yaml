@@ -6,6 +6,8 @@ Question:
             text: "String!"
             options: "[String]!"
             correctAnswer: "[Int]!"
-            type: "String"
+            type:
+                type: "QuestionTypes"
+                resolve: "@=value.getType().value"
             position: "Int!"
             explanation: "String"

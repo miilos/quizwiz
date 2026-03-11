@@ -1,0 +1,8 @@
+QuestionTypes:
+    type: enum
+    config:
+        values:
+            one:
+                value: "one"
+            multiple:
+                value: "multiple"

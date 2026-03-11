@@ -64,6 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
      * @var Collection<int, QuizAttempt>
      */
     #[ORM\OneToMany(targetEntity: QuizAttempt::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ORM\OrderBy(['attemptedAt' => 'DESC'])]
     #[Groups(['fullUserInfo'])]
     private Collection $quizAttempts;
 

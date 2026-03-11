@@ -39,12 +39,12 @@ class QuizMutation implements MutationInterface
     public function updateQuiz(Argument $args): bool
     {
         try {
-            self::getLoggedInUser($this->security);
+            $user = self::getLoggedInUser($this->security);
 
             $id = $args->offsetGet('id');
             $inputData = $args->offsetGet('quiz');
 
-            $quizUpdated = $this->quizService->updateQuiz($inputData, $id);
+            $quizUpdated = $this->quizService->updateQuiz($inputData, $id, $user);
 
             if (!$quizUpdated) {
                 throw new UserError('No quiz found with id ' . $id);
@@ -63,11 +63,11 @@ class QuizMutation implements MutationInterface
     public function deleteQuiz(Argument $args): bool
     {
         try {
-            self::getLoggedInUser($this->security);
+            $user = self::getLoggedInUser($this->security);
 
             $id = $args->offsetGet('id');
 
-            $quizDeleted = $this->quizService->deleteQuiz($id);
+            $quizDeleted = $this->quizService->deleteQuiz($id, $user);
 
             if (!$quizDeleted) {
                 throw new UserError(sprintf('Quiz with id "%s" not found.', $id));

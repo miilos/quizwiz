@@ -30,3 +30,9 @@ Query:
                     id:
                         type: "Int!"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizAttemptResolver::resolveAttemptsForUser", args)'
+            attempt:
+                type: "QuizAttempt"
+                args:
+                    id:
+                        type: "Int!"
+                resolve: '@=query("App\\GraphQL\\Resolver\\QuizAttemptResolver::resolveAttempt", args)'

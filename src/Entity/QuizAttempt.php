@@ -18,6 +18,7 @@ class QuizAttempt implements EntityInterface
 
     #[ORM\ManyToOne(inversedBy: 'attempts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['fullUserInfo'])]
     private ?Quiz $quiz = null;
 
     #[ORM\Column]

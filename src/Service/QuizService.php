@@ -8,6 +8,7 @@ use App\Entity\Quiz;
 use App\Entity\Trait\EntityValidatorTrait;
 use App\Entity\User;
 use App\Repository\QuizRepository;
+use App\Service\Auth\AuthorizationService;
 use App\Service\Converter\QuizConverterService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,15 +25,15 @@ class QuizService
         private readonly EntityManagerInterface $entityManager,
         private readonly TagService $tagService,
         private readonly QuestionService $questionService,
+        private readonly AuthorizationService $authorizationService,
     ) {}
 
     public function getAllQuizzes(): array
     {
-        $quizzes = $this->quizRepository->findAll();
-        return $this->quizConverterService->entityArrayToDtoArray($quizzes);
+        return $this->quizRepository->findAll();
     }
 
-    public function getQuizById(int $id): ?QuizDto
+    public function getQuizById(int $id): ?Quiz
     {
         $quiz = $this->quizRepository->findOneBy(["id" => $id]);
 
@@ -40,7 +41,7 @@ class QuizService
             return null;
         }
 
-        return $this->quizConverterService->entityToDto($quiz);
+        return $quiz;
     }
 
     public function searchQuizzes(string $query): array
@@ -55,14 +56,12 @@ class QuizService
             return [];
         }
 
-        $quizEntities = $this->quizRepository->findBy(['id' => $quizIds]);
-        return $this->quizConverterService->entityArrayToDtoArray($quizEntities);
+        return $this->quizRepository->findBy(['id' => $quizIds]);
     }
 
     public function filterByTags(array $tagIds): array
     {
-        $quizEntities = $this->quizRepository->filterByTags($tagIds);
-        return $this->quizConverterService->entityArrayToDtoArray($quizEntities);
+        return $quizEntities = $this->quizRepository->filterByTags($tagIds);
     }
 
     public function createQuiz(array $inputData, User $user): Quiz
@@ -95,13 +94,15 @@ class QuizService
         return $quiz;
     }
 
-    public function updateQuiz(array $inputData, int $id): bool
+    public function updateQuiz(array $inputData, int $id, User $user): bool
     {
         $quiz = $this->quizRepository->findOneBy(["id" => $id]);
 
         if (!$quiz) {
             return false;
         }
+
+        $this->authorizationService->authorizeQuizActions($user, $quiz);
 
         $quiz
             ->setTitle($inputData['title'])
@@ -125,13 +126,15 @@ class QuizService
         return true;
     }
 
-    public function deleteQuiz(int $id): bool
+    public function deleteQuiz(int $id, User $user): bool
     {
         $quiz = $this->quizRepository->findOneBy(["id" => $id]);
 
         if (!$quiz) {
             return false;
         }
+
+        $this->authorizationService->authorizeQuizActions($user, $quiz);
 
         foreach ($quiz->getTags() as $tag) {
             $tag->removeQuiz($quiz);

@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Resolver;
 
-use App\Dto\QuizDto;
+use App\Entity\Quiz;
 use App\Entity\User;
 use App\Service\QuizService;
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -19,24 +19,24 @@ class QuizResolver implements QueryInterface
         return $this->quizService->getAllQuizzes();
     }
 
-    public function resolveQuestions(QuizDto $quiz): array
+    public function resolveQuestions(Quiz $quiz): array
     {
-        return $quiz->getQuestions();
+        return $quiz->getQuestions()->toArray();
     }
 
-    public function resolveAuthor(QuizDto $quiz): ?User
+    public function resolveAuthor(Quiz $quiz): ?User
     {
         return $quiz->getAuthor();
     }
 
-    public function resolveQuiz(Argument $args): ?QuizDto
+    public function resolveQuiz(Argument $args): ?Quiz
     {
         return $this->quizService->getQuizById($args->offsetGet('id'));
     }
 
-    public function resolveTags(QuizDto $quiz): ?array
+    public function resolveTags(Quiz $quiz): ?array
     {
-        return $quiz->getTags();
+        return $quiz->getTags()->toArray();
     }
 
     public function resolveQuizSearch(Argument $args): array
