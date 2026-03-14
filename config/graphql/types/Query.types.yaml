@@ -5,24 +5,28 @@ Query:
             quizzes:
                 type: "[Quiz]"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuizzes", args)'
+                description: 'Fetch all quizzes'
             quiz:
                 type: "Quiz"
                 args:
                     id:
                         type: "Int!"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuiz", args)'
+                description: 'Fetch a quiz by its id'
             searchQuizzes:
                 type: "[Quiz]"
                 args:
                     searchParams:
                         type: "SearchQuizInput!"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveQuizSearch", args)'
+                description: 'Search quizzes by keywords'
             filterByTags:
                 type: "[Quiz]"
                 args:
                     tagIds:
                         type: "[Int!]"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveFilterByTags", args)'
+                description: 'Get quizzes that have certain tags'
 
             attemptsForUser:
                 type: "[QuizAttempt]"
@@ -30,9 +34,11 @@ Query:
                     id:
                         type: "Int!"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizAttemptResolver::resolveAttemptsForUser", args)'
+                description: 'Get attempts for user with specified id'
             attempt:
                 type: "QuizAttempt"
                 args:
                     id:
                         type: "Int!"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizAttemptResolver::resolveAttempt", args)'
+                description: 'Get quiz attempt by id'

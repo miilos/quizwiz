@@ -6,10 +6,12 @@ use App\Exception\ApiResourceNotFoundException;
 use App\Repository\QuizRepository;
 use App\Service\Pdf\QuizHtmlParserService;
 use Dompdf\Dompdf;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[OA\Tag(name: 'Files')]
 class FileGenController extends AbstractController
 {
     public function __construct(
@@ -17,6 +19,21 @@ class FileGenController extends AbstractController
         private readonly QuizHtmlParserService $quizHtmlParserService,
     ) {}
 
+    #[OA\Get(
+        path: '/api/quiz/{id}/pdf',
+        summary: 'Download a quiz as a PDF file',
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'PDF file download',
+                content: new OA\MediaType(mediaType: 'application/pdf')
+            ),
+            new OA\Response(response: 404, description: 'Quiz not found'),
+        ]
+    )]
     #[Route('/api/quiz/{id}/pdf', name: 'quiz-pdf', methods: ['GET'])]
     public function generateQuizPdf(
         int $id

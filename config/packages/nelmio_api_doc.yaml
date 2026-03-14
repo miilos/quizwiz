@@ -1,0 +1,15 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: QuizWiz
+            description: This is an AI-powered quiz app allowing users to create and share quizzes
+            version: 1.0.0
+        components:
+            securitySchemes:
+                bearerAuth:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

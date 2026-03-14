@@ -2,4 +2,6 @@ TagInput:
     type: input-object
     config:
         fields:
-            name: "String!"
+            name:
+                type: "String!"
+                description: 'The unique identifier of the tag'

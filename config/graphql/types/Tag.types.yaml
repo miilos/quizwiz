@@ -3,5 +3,9 @@ Tag:
     config:
         fields:
             id: "Int!"
-            name: "String!"
-            displayName: "String!"
+            name:
+                type: "String!"
+                description: 'The unique identifier of the tag'
+            displayName:
+                type: "String!"
+                description: 'The formatted name of the tag displayed to the user'

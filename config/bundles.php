@@ -15,4 +15,5 @@ return [
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
     Overblog\GraphiQLBundle\OverblogGraphiQLBundle::class => ['dev' => true],
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
+    Nelmio\ApiDocBundle\NelmioApiDocBundle::class => ['all' => true],
 ];

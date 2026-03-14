@@ -60,7 +60,7 @@ class QuizService
 
     public function filterByTags(array $tagIds): array
     {
-        return $quizEntities = $this->quizRepository->filterByTags($tagIds);
+        return $this->quizRepository->filterByTags($tagIds);
     }
 
     public function createQuiz(array $inputData, User $user): Quiz

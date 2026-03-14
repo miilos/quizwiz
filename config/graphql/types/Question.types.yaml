@@ -9,5 +9,8 @@ Question:
             type:
                 type: "QuestionTypes"
                 resolve: "@=value.getType().value"
-            position: "Int!"
+                description: 'Either "one" or "multiple"'
+            position:
+                type: "Int!"
+                description: 'The index of the question in the quiz''s questions array'
             explanation: "String"

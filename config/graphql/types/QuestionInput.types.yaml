@@ -5,7 +5,9 @@ QuestionInput:
             text: "String!"
             options: "[String]!"
             correctAnswer: "[Int]!"
-            type: "QuestionTypes!"
+            type:
+                type: "QuestionTypes!"
+                description: 'Either "one" or "multiple"'
             explanation: "String"
 
 UpdateQuestionInput:
@@ -16,5 +18,7 @@ UpdateQuestionInput:
             text: "String!"
             options: "[String]!"
             correctAnswer: "[Int]!"
-            type: "QuestionTypes"
+            type:
+                type: "QuestionTypes"
+                description: 'Either "one" or "multiple"'
             explanation: "String"
