@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Dto\QuizDto;
 use App\Dto\SearchCriteria\QuizSearchCriteriaDto;
 use App\Entity\Quiz;
 use App\Entity\Trait\EntityValidatorTrait;
@@ -69,6 +68,7 @@ class QuizService
         $quiz = (new Quiz())
             ->setTitle($inputData['title'])
             ->setDescription($inputData['description'] ?? null)
+            ->setFurtherReading($inputData['furtherReading'] ?? null)
             ->setAuthor($user)
             ->setCreatedAt(new DateTimeImmutable());
 
@@ -106,7 +106,8 @@ class QuizService
 
         $quiz
             ->setTitle($inputData['title'])
-            ->setDescription($inputData['description'] ?? null);
+            ->setDescription($inputData['description'] ?? null)
+            ->setFurtherReading($inputData['furtherReading'] ?? null);
 
         if (isset($inputData['tags'])) {
             $tags = $this->tagService->updateQuizTags($inputData['tags'], $quiz);

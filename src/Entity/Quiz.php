@@ -58,6 +58,10 @@ class Quiz implements EntityInterface
     #[Groups(['fullUserInfo'])]
     private Collection $tags;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['full_quiz_data', 'fullUserInfo'])]
+    private ?string $furtherReading = null;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
@@ -201,6 +205,18 @@ class Quiz implements EntityInterface
         if ($this->tags->removeElement($tag)) {
             $tag->removeQuiz($this);
         }
+
+        return $this;
+    }
+
+    public function getFurtherReading(): ?string
+    {
+        return $this->furtherReading;
+    }
+
+    public function setFurtherReading(?string $furtherReading): static
+    {
+        $this->furtherReading = $furtherReading;
 
         return $this;
     }

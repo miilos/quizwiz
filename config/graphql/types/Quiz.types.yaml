@@ -15,3 +15,4 @@ Quiz:
             tags:
                 type: "[Tag]"
                 resolve: '@=query("App\\GraphQL\\Resolver\\QuizResolver::resolveTags", value)'
+            furtherReading: "String"

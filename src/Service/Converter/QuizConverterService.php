@@ -44,7 +44,8 @@ class QuizConverterService
         $quizDto
             ->setQuestions($questionDtos)
             ->setAuthor($quiz->getAuthor())
-            ->setCreatedAt($quiz->getCreatedAt());
+            ->setCreatedAt($quiz->getCreatedAt())
+            ->setFurtherReading($quiz->getFurtherReading());
 
         return $quizDto;
     }

@@ -98,4 +98,26 @@ class UserManagerService
 
         return $user;
     }
+
+    public function deleteUser(User $user): void
+    {
+        foreach ($user->getQuizzes() as $quiz) {
+            $this->entityManager->remove($quiz);
+        }
+
+        foreach ($user->getQuizAttempts() as $attempt) {
+            $this->entityManager->remove($attempt);
+        }
+
+        foreach ($user->getChatHistories() as $history) {
+            $this->entityManager->remove($history);
+        }
+
+        foreach ($user->getTokens() as $token) {
+            $this->entityManager->remove($token);
+        }
+
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+    }
 }

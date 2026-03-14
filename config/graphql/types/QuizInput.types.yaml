@@ -6,6 +6,7 @@ QuizInput:
             description: "String"
             questions: "[QuestionInput]!"
             tags: "[TagInput]"
+            furtherReading: "String"
 
 UpdateQuizInput:
     type: input-object
@@ -15,6 +16,7 @@ UpdateQuizInput:
             description: "String"
             questions: "[UpdateQuestionInput]!"
             tags: "[TagInput]"
+            furtherReading: "String"
 
 SearchQuizInput:
     type: input-object

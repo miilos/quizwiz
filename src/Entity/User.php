@@ -29,6 +29,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, EntityI
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups(['fullUserInfo'])]
     private array $roles = [];
 
     /**

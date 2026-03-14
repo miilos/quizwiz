@@ -12,10 +12,12 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class AuthController extends AbstractController
@@ -114,6 +116,29 @@ class AuthController extends AbstractController
         ], context: ['groups' => 'basicUserInfo']);
     }
 
+    #[Route('/api/admin/account/{id}/edit', name: 'edit_admin', methods: ['POST'])]
+    public function editProfileAdmin(
+        int $id,
+        Request $request,
+    ): JsonResponse
+    {
+        $user = $this->userRepository->findOneBy(['id' => $id]);
+
+        if (!$user) {
+            throw new AuthException('You must log in first!', 401);
+        }
+
+        $data = $request->toArray();
+        $user = $this->userManagerService->editAccount($user, $data);
+
+        return $this->json([
+            'status' => 'success',
+            'data' => [
+                'user' => $user,
+            ]
+        ], context: ['groups' => 'basicUserInfo']);
+    }
+
     // TODO: put a RedirectResponse with an actual route name or url here once the frontend exists
     #[Route('/api/account/activate/{token}', name: 'activate_account')]
     public function activateAccount(
@@ -177,5 +202,36 @@ class AuthController extends AbstractController
             'status' => 'success',
             'message' => 'Password reset successful!',
         ]);
+    }
+
+    #[Route('/api/account/{id}/delete', name: 'delete_account', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteAccount(
+        int $id
+    ): JsonResponse
+    {
+        $user = $this->userRepository->findOneBy(['id' => $id]);
+
+        if (!$user) {
+            throw new BadRequestHttpException('User not found!');
+        }
+
+        $this->userManagerService->deleteUser($user);
+
+        return $this->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/api/account/list', name: 'accounts_list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getAllAccounts(): JsonResponse
+    {
+        $users = $this->userRepository->findAll();
+
+        return $this->json([
+            'status' => 'success',
+            'data' => [
+                'users' => $users,
+            ]
+        ], context: ['groups' => 'fullUserInfo']);
     }
 }

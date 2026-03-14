@@ -33,6 +33,9 @@ class QuizDto implements EntityDtoInterface
 
         #[Groups(['full_quiz_data'])]
         private ?DateTimeImmutable $createdAt = null,
+
+        #[Groups(['full_quiz_data'])]
+        private ?string $furtherReading = null,
     ) {}
 
     public function getId(): ?int
@@ -115,6 +118,18 @@ class QuizDto implements EntityDtoInterface
     public function setCreatedAt(?DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getFurtherReading(): ?string
+    {
+        return $this->furtherReading;
+    }
+
+    public function setFurtherReading(?string $furtherReading): self
+    {
+        $this->furtherReading = $furtherReading;
 
         return $this;
     }
