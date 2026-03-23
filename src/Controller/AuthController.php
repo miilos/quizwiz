@@ -8,6 +8,8 @@ use App\Exception\AuthException;
 use App\Repository\UserRepository;
 use App\Service\Auth\TokenService;
 use App\Service\Auth\UserManagerService;
+use App\Service\Util\IPLoggerTrait;
+use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,10 +26,13 @@ use Symfony\Component\Serializer\Encoder\DecoderInterface;
 #[OA\Tag(name: 'Auth')]
 class AuthController extends AbstractController
 {
+    use IPLoggerTrait;
+
     public function __construct(
         private readonly UserManagerService $userManagerService,
         private readonly UserRepository $userRepository,
         private readonly TokenService $tokenService,
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     #[OA\Post(
@@ -107,6 +112,8 @@ class AuthController extends AbstractController
         }
 
         $token = $this->tokenService->generateToken($user);
+
+        self::logAccess($request, $this->entityManager);
 
         return $this->json([
             'status' => 'success',
