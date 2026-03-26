@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AccessLogRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AccessLogRepository::class)]
 class AccessLog
@@ -14,12 +15,15 @@ class AccessLog
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['access-log'])]
     private ?string $ip = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['access-log'])]
     private ?string $deviceType = null;
 
     #[ORM\Column]
+    #[Groups(['access-log'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
